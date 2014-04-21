@@ -13,16 +13,19 @@
  */
 
 #include <algorithm>
+#include <limits>
+#include <iterator>
 #include <vector>
 #include <utility>
 #include <cmath>
 
 namespace img {
-    template <typename T, typename U, typename F, typename P, 
-              typename C = std::vector<double>>
-    void ellipfit (T majormin, T minormax, U n, F f, P p, C c = C())
+    template <typename T, typename U, typename F, typename P>
+    void ellipfit (T majormin, T minormax, U n, F f, P p, 
+                   unsigned int threshold = 4)
     {
         using std::get;
+        std::vector<unsigned int> acc(minormax);
         T maxbsqr = minormax * minormax;
         for (T i = 0; i < n; ++i) {
             auto p1 = f(i);
@@ -57,16 +60,21 @@ namespace img {
                             if (l > 0 && costausqr < 1) {
                                 double bsqr = asqr * dsqr * (1 - costausqr) / l;
                                 if (bsqr <= maxbsqr) {
-                                    c.push_back(bsqr);
+                                    auto b = static_cast<unsigned int>(sqrt(bsqr));
+                                    if (b && acc[b] < std::numeric_limits<unsigned int>::max()) {
+                                        ++acc[b];
+                                    }
                                 }
                             }
                         }
                     }
-                    if (c.size()) {
-                        double b = sqrt(*std::max_element(c.begin(), c.end()));
+                    auto b = std::distance(acc.begin(), 
+                                           std::max_element(acc.begin(), 
+                                                            acc.end()));
+                    if (acc[b] > threshold) {
                         p(cx, cy, a, b);
-                        c.clear();
                     }
+                    std::fill(acc.begin(), acc.end(), 0);
                 }
             }
         }
