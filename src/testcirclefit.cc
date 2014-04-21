@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cassert>
-#include "image/houghcirc.h"
+#include "image/circlefit.h"
 #include "monocircle.xbm"
 
 template <typename T>
@@ -46,13 +46,13 @@ static int circlepget (int x, int y) {
 
 int main (int argc, char *argv[]) {
     range<int> radii(3, 17);
-    img::houghcirc (radii.begin(), radii.end(), 64, 64, circlepget, param);
+    img::circlefit (radii.begin(), radii.end(), 64, 64, circlepget, param);
     
     for (int r = 3; r <= 16; ++r) {
         std::cout << "r = " << r << " score matrix" << std::endl;
         for (int i = 0; i < 64; ++i) {
             for (int j = 0; j < 64; ++j) {
-                if (acc[r - 3][i][j] > 130) {
+                if (acc[r - 3][i][j] >= 360) {
                     std::cerr << "CANDIDATE: " << "x=" << j << ", y=" << i << ", r=" << r 
                               << ", score=" << acc[r - 3][i][j] << std::endl;
                 }

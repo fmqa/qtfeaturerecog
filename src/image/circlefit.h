@@ -1,12 +1,12 @@
-#ifndef IMG_HOUGHCIRC_H
-#define IMG_HOUGHCIRC_H
+#ifndef IMG_CIRCLEFIT_H
+#define IMG_CIRCLEFIT_H
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace img {
     template <typename InputIterator, typename T, typename F, typename P>
-    void houghcirc (InputIterator begin, InputIterator end, 
+    void circlefit (InputIterator begin, InputIterator end, 
                     T width, T height, 
                     F f, P p) 
     {
@@ -14,9 +14,9 @@ namespace img {
             for (T i = 0; i < height; ++i) {
                 for (T j = 0; j < width; ++j) {
                     if (f(j, i)) {
-                        for (int theta = 0; theta < 180; ++theta) {
-                            T x = j + (*begin) * std::cos(theta * 180 / M_PI);
-                            T y = i + (*begin) * std::sin(theta * 180 / M_PI);
+                        for (int theta = 0; theta < 360; ++theta) {
+                            T x = j + (*begin) * cos(theta * M_PI / 180);
+                            T y = i + (*begin) * sin(theta * M_PI / 180);
                             if (x >= 0 && x < width && y >= 0 && y < height) {
                                 ++p(x, y, *begin);
                             }
@@ -28,4 +28,4 @@ namespace img {
     }
 }
 
-#endif /* #ifndef IMG_HOUGHCIRC_H */
+#endif /* #ifndef IMG_CIRCLEFIT_H */

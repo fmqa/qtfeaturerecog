@@ -17,10 +17,11 @@ namespace img {
     
     template <typename T, typename F, typename G, typename H>
     void sobel (T width, T height, F f, G g, H h) {
+        using std::get;
         for (T i = 0; i < height; ++i) {
             for (T j = 0; j < width; ++j) {
                 auto gxy = sobel(j, i, f);
-                g(j, i) = h(gxy.first, gxy.second);
+                g(j, i) = h(get<0>(gxy), get<1>(gxy));
             }
         }
     }
