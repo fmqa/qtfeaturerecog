@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "image/ellipfit.h"
-#include "monoellip2.xbm"
+#include "monoellip4.xbm"
 
 int main (int argc, char *argv[]) {
     std::vector<std::pair<int,int>> edges;
@@ -16,8 +16,12 @@ int main (int argc, char *argv[]) {
     
     img::ellipfit (21, 17, edges.size(), 
                    [&edges](unsigned int x) { return edges[x]; },
-                   [](double xc, double yc, double a, int b) {
-                       std::cout << (int)xc << ' ' << (int)yc << ' ' << (int)a << ' ' << (int)b << std::endl;
+                   [](double xc, double yc, double a, int b, float orientation) {
+                       std::cout << (int)xc << ' ' 
+                                 << (int)yc << ' ' 
+                                 << (int)a << ' ' 
+                                 << (int)b << ' '
+                                 << orientation << std::endl;
                    },
                    8);
     
