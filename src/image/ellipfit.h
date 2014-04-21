@@ -69,21 +69,23 @@ namespace img {
                             }
                         }
                     }
-                    double b = std::distance(acc.begin(), 
-                                             std::max_element(acc.begin(), 
-                                                              acc.end()));
-                    if (acc[b] > threshold) {
-                        float orientation = atan2(p1y - p2y, p1x - p2x);
-                        if (orientation != 0) {
-                            orientation = M_PI - orientation;
-                            if (orientation > M_PI) {
-                                orientation = orientation - M_PI / 2;
-                                std::swap(a, b);
+                    {
+                        double b = std::distance(acc.begin(), 
+                                                 std::max_element(acc.begin(), 
+                                                                  acc.end()));
+                        if (acc[b] > threshold) {
+                            float orientation = atan2(p1y - p2y, p1x - p2x);
+                            if (orientation != 0) {
+                                orientation = M_PI - orientation;
+                                if (orientation > M_PI) {
+                                    orientation = orientation - M_PI / 2;
+                                    std::swap(a, b);
+                                }
                             }
+                            p(cx, cy, a, b, orientation);
                         }
-                        p(cx, cy, a, b, orientation);
+                        std::fill(acc.begin(), acc.end(), 0);
                     }
-                    std::fill(acc.begin(), acc.end(), 0);
                 }
             }
         }
