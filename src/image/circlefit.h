@@ -1,6 +1,7 @@
 #ifndef IMG_CIRCLEFIT_H
 #define IMG_CIRCLEFIT_H
 
+#include <utility>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -22,6 +23,23 @@ namespace img {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+    
+    template <typename InputIterator, typename ForwardIterator, typename P>
+    void circlefit (InputIterator radiusbegin, InputIterator radiusend,
+                    ForwardIterator edgebegin, ForwardIterator edgeend,
+                    P p)
+    {
+        using std::get;
+        for (; radiusbegin != radiusend; ++radiusbegin) {
+            for (ForwardIterator e = edgebegin; e != edgeend; ++e) {
+                for (int theta = 0; theta < 360; ++theta) {
+                    p(get<0>(*e) + (*radiusbegin) * cos(theta * M_PI / 180),
+                      get<1>(*e) + (*radiusbegin) * sin(theta * M_PI / 180),
+                      *radiusbegin);
                 }
             }
         }
