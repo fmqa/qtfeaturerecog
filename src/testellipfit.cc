@@ -14,8 +14,7 @@ int main (int argc, char *argv[]) {
         }
     }
     
-    img::ellipfit (21, 17, edges.size(), 
-                   [&edges](unsigned int x) { return edges[x]; },
+    img::ellipfit (edges.begin(), edges.end(), 21, 17,
                    [](double xc, double yc, double a, int b, float orientation) {
                        std::cout << (int)xc << ' ' 
                                  << (int)yc << ' ' 

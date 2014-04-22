@@ -21,31 +21,29 @@
 #include <cmath>
 
 namespace img {
-    template <typename T, typename U, typename F, typename P>
-    void ellipfit (T majormin, T minormax, U n, F f, P p, 
+    template <typename ForwardIterator, typename T, typename P>
+    void ellipfit (ForwardIterator begin, ForwardIterator end,
+                   T majormin, T minormax, P p, 
                    unsigned int threshold = 4)
     {
         using std::get;
         std::vector<unsigned int> acc(minormax);
         T maxbsqr = minormax * minormax;
-        for (T i = 0; i < n; ++i) {
-            auto p1 = f(i);
-            auto p1x = get<0>(p1);
-            auto p1y = get<1>(p1);
-            for (T j = 0; j < i; ++j) {
-                auto p2 = f(j);
-                auto p2x = get<0>(p2);
-                auto p2y = get<1>(p2);
+        for (ForwardIterator i = begin; i != end; ++i) {
+            auto p1x = get<0>(*i);
+            auto p1y = get<1>(*i);
+            for (ForwardIterator j = begin; j != i; ++j) {
+                auto p2x = get<0>(*j);
+                auto p2y = get<1>(*j);
                 auto dp1p2x = p1x - p2x;
                 auto dp1p2y = p1y - p2y;
                 double a = 0.5 * sqrt(dp1p2x * dp1p2x + dp1p2y * dp1p2y);
                 if (a > 0.5 * majormin) {
                     double cx = 0.5 * (p1x + p2x);
                     double cy = 0.5 * (p1y + p2y);
-                    for (T k = 0; k < n; ++k) {
-                        auto p3 = f(k);
-                        auto p3x = get<0>(p3);
-                        auto p3y = get<1>(p3);
+                    for (ForwardIterator k = begin; k != end; ++k) {
+                        auto p3x = get<0>(*k);
+                        auto p3y = get<1>(*k);
                         auto dp3cx = p3x - cx;
                         auto dp3cy = p3y - cy;
                         double d = sqrt(dp3cx * dp3cx + dp3cy * dp3cy);
