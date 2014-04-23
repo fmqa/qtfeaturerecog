@@ -76,7 +76,7 @@ namespace img {
                             if (orientation != 0) {
                                 orientation = M_PI - orientation;
                                 if (orientation > M_PI) {
-                                    orientation = orientation - M_PI / 2;
+                                    orientation -= M_PI / 2;
                                     std::swap(a, b);
                                 }
                             }
