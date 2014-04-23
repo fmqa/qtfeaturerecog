@@ -28,18 +28,18 @@ namespace img {
         }
     }
     
-    template <typename InputIterator, typename ForwardIterator, typename P>
-    void circlefit (InputIterator radiusbegin, InputIterator radiusend,
-                    ForwardIterator edgebegin, ForwardIterator edgeend,
+    template <typename ForwardIterator, typename InputIterator, typename P>
+    void circlefit (InputIterator edgebegin, InputIterator edgeend,
+                    ForwardIterator radiusbegin, ForwardIterator radiusend,
                     P p)
     {
         using std::get;
-        for (; radiusbegin != radiusend; ++radiusbegin) {
-            for (ForwardIterator e = edgebegin; e != edgeend; ++e) {
+        for (; edgebegin != edgeend; ++edgebegin) {
+            for (ForwardIterator r = radiusbegin; r != radiusend; ++r) {
                 for (int theta = 0; theta < 360; ++theta) {
-                    p(get<0>(*e) + (*radiusbegin) * cos(theta * M_PI / 180),
-                      get<1>(*e) + (*radiusbegin) * sin(theta * M_PI / 180),
-                      *radiusbegin);
+                    p(get<0>(*edgebegin) + (*r) * cos(theta * M_PI / 180),
+                      get<1>(*edgebegin) + (*r) * sin(theta * M_PI / 180),
+                      *r);
                 }
             }
         }
