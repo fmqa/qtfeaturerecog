@@ -14,9 +14,13 @@
 #include <utility>
 #include <cmath>
 #include "pnm.h"
-#include "image/sobel.h"
+#include "raster/sobel.h"
 
 static float qhypot (float a, float b) {
+    return std::sqrt(a * a + b * b);
+}
+
+static float qhypot (int a, int b) {
     return std::sqrt(a * a + b * b);
 }
 
@@ -42,22 +46,27 @@ int main (int argc, char *argv[]) {
     
     std::vector<char> greyv(width * height);
     
-    img::sobel (width, height,
-                [&rgbv,width,height](int x, int y) { 
-                    if (x >= 0 && y >= 0 && static_cast<unsigned int>(x) < width && static_cast<unsigned int>(y) < height) {
-                        // Quick, Ad-hoc greyscale conversion
-                        return (rgbv[3 * (y * width + x)] + 
-                                rgbv[3 * (y * width + x) + 1] +
-                                rgbv[3 * (y * width + x) + 2]) / 3;
-                    } else {
-                        return 0;
-                    }
-                },
-                [&greyv,width](size_t x, size_t y) -> char& {
-                    return greyv[y * width + x];
-                },
-                qhypot);
+    auto fn = [&rgbv,width,height](int x, int y) { 
+        if (x >= 0 && y >= 0 && static_cast<unsigned int>(x) < width && static_cast<unsigned int>(y) < height) {
+            // Quick, Ad-hoc greyscale conversion
+            return (rgbv[3 * (y * width + x)] + 
+                    rgbv[3 * (y * width + x) + 1] +
+                    rgbv[3 * (y * width + x) + 2]) / 3;
+        } else {
+            return 0;
+        }
+    };
     
+    rast::sobel_sequence<int,decltype(fn)> seq(width, height, fn);
+    
+    std::cout << greyv.size() << std::endl;
+    
+    int i = 0;
+    for (auto const &p : seq) {
+        greyv[i] = qhypot(p.energy.first, p.energy.second);
+        std::cout << i << " : " << p.x << ' ' << p.y << " = " << (int)greyv[i] << std::endl;
+        ++i;
+    }
     
     std::ofstream pgmf("output.pgm", std::ostream::trunc);
     

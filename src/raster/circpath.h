@@ -2,17 +2,26 @@
 #define CIRCPATH_H
 
 #include <utility>
+#define _USE_MATH_DEFINES
 #include <cmath>
+#include "../ranges/interval.h"
 
-namespace raster {
+namespace rast {
     template <typename AngleIterator, typename T>
     class circpath {
     public:
         class iterator : public std::iterator<std::random_access_iterator_tag, std::pair<T,T>> {
             friend class circpath;
             iterator (AngleIterator a, const circpath *p) : angle(a), parent(p),
-                cursor(parent->x0 + parent->radius * cos(*angle),
-                       parent->y0 + parent->radius * sin(*angle)) {}
+                cursor(calcx(),calcy()) {}
+            
+            T calcx() const { return parent->x0 + parent->radius * cos(*angle * M_PI / 180); }
+            T calcy() const { return parent->y0 + parent->radius * sin(*angle * M_PI / 180); }
+            
+            void update() {
+                cursor.first = calcx();
+                cursor.second = calcy();
+            }
         public:
             const std::pair<T,T> &operator* () const {
                 return cursor;
@@ -20,77 +29,67 @@ namespace raster {
             
             iterator &operator++ () {
                 ++angle;
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return *this;
             }
             
             iterator operator++ (int) { 
                 iterator cpy = *this; 
                 ++angle; 
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return cpy;
             }
             
             iterator &operator-- () {
                 --angle;
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return *this;
             }
             
             iterator operator-- (int) {
                 iterator cpy = *this; 
                 --angle; 
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return cpy;
             }
             
             iterator operator+ (typename iterator::difference_type n) const {
                 iterator cpy = *this;
                 std::advance(cpy.angle, n);
-                cpy.cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cpy.cursor.second = parent->y0 + parent->radius * sin(*angle);
+                cpy.update();                
                 return cpy;
             }
             
             iterator operator- (typename iterator::difference_type n) const {
                 iterator cpy = *this;
                 std::advance(cpy.angle, -n);
-                cpy.cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cpy.cursor.second = parent->y0 + parent->radius * sin(*angle);
+                cpy.update();
                 return cpy;
             }
             
             iterator operator- (const iterator &it) const {
                 iterator cpy = *this;
                 std::advance(cpy.angle, -it.angle);
-                cpy.cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cpy.cursor.second = parent->y0 + parent->radius * sin(*angle);
+                cpy.update();
                 return cpy;
             }
             
             iterator &operator+= (typename iterator::difference_type n) {
                 std::advance(angle, n);
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return *this;
             }
             
             iterator &operator-= (typename iterator::difference_type n) {
                 std::advance(angle, -n);
-                cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cursor.second = parent->y0 + parent->radius * sin(*angle);
+                update();
                 return *this;
             }
             
             const std::pair<T,T>& operator[] (typename iterator::difference_type n) const {
                 iterator cpy = *this;
                 std::advance(cpy.angle, n);
-                cpy.cursor.first = parent->x0 + parent->radius * cos(*angle);
-                cpy.cursor.second = parent->y0 + parent->radius * sin(*angle);
+                cpy.update();
                 return *cpy;
             }
             
@@ -127,6 +126,12 @@ namespace raster {
                                             T radius, T x = T(), T y = T()) 
     {
         return circpath<AngleIterator, T>(begin, end, radius, x, y);
+    }
+    
+    template <typename T>
+    circpath<T,ranges::interval<int>> makestdcircpath(T radius, T x = T(), T y = T()) {
+        ranges::interval<int> fullarc(0, 359, 1);
+        return makecircpath(fullarc.begin(), fullarc.end(), x, y);
     }
 }
 

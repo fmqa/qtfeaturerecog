@@ -1,6 +1,6 @@
 #include "bhcircpath.h"
 
-const int raster::bhcircindices[8][2][2] = {
+const int rast::bhcircindices[8][2][2] = {
     {{ 1, 0}, { 1, 1}},
     {{ 1, 1}, { 1, 0}},
     {{-1, 0}, { 1, 1}},

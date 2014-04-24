@@ -5,7 +5,7 @@
 #include <utility>
 #include <iterator>
 
-namespace raster {
+namespace rast {
     extern const int bhcircindices[8][2][2];
     
     template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
@@ -14,7 +14,7 @@ namespace raster {
         class iterator {
             friend class bhcircpath;
             
-            iterator (const bhcircpath *p) : parent(p), x(p->radius), y(0), i(0), radiuserr(1 - p->radius), point() {
+            iterator (const bhcircpath *p) : parent(p), x(p->radius), y(), i(), radiuserr(1 - p->radius), point() {
                 ++(*this);
             }
             
@@ -73,7 +73,7 @@ namespace raster {
             std::pair<T,T> point;
         };
         
-        bhcircpath (T radius, T x = 0, T y = 0) : radius(radius), x0(x), y0(y) {}
+        bhcircpath (T radius, T x = T(), T y = T()) : radius(radius), x0(x), y0(y) {}
         
         iterator begin() const { return iterator(this); }
         iterator end() const { return iterator(); }
@@ -82,6 +82,11 @@ namespace raster {
     private:
         T radius, x0, y0;
     };
+    
+    template <typename T>
+    bhcircpath<T> makebhcirclepath(T radius, T x = T(), T y = T()) {
+        return bhcircpath<T>(radius, x, y);
+    }
 }
 
 #endif /* #ifndef BHCIRCPATH_H */

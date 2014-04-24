@@ -16,7 +16,7 @@ namespace ranges {
             iterator &operator++ () {
                 if (parent) {
                     T update = value + parent->step;
-                    if (update >= value && update <= parent->max) {
+                    if (update > value && update <= parent->max) {
                         value = update;
                     } else {
                         value = T();
@@ -30,7 +30,7 @@ namespace ranges {
                 iterator cpy = *this;
                 if (parent) {
                     T update = value + parent->step;
-                    if (update >= value && update <= parent->max) {
+                    if (update > value && update <= parent->max) {
                         value = update;
                     } else {
                         value = T();
@@ -43,7 +43,7 @@ namespace ranges {
             iterator &operator-- () {
                 if (parent) {
                     T update = value - parent->step;
-                    if (update <= value && update >= parent->min) {
+                    if (update < value && update >= parent->min) {
                         value = update;
                     } else {
                         value = T();
@@ -57,7 +57,7 @@ namespace ranges {
                 iterator cpy = *this;
                 if (parent) {
                     T update = value - parent->step;
-                    if (update <= value && update >= parent->min) {
+                    if (update < value && update >= parent->min) {
                         value = update;
                     } else {
                         value = T();
@@ -71,7 +71,7 @@ namespace ranges {
                 iterator cpy = *this;
                 if (parent) {
                     cpy.value += n * parent->step;
-                    if (cpy.value < value || cpy.value > parent->max) {
+                    if (n > parent->max || cpy.value < value || cpy.value > parent->max) {
                         cpy.value = T();
                         cpy.parent = 0;
                     }
@@ -91,22 +91,14 @@ namespace ranges {
                 return cpy;
             }
             
-            iterator operator- (const iterator &it) const {
-                iterator cpy = *this;
-                if (parent) {
-                    cpy.value -= it.value;
-                    if (cpy.value > value || cpy.value < parent->min) {
-                        cpy.value = T();
-                        cpy.parent = 0;
-                    }
-                }
-                return cpy;
+            typename iterator::difference_type operator- (const iterator &it) const {
+                return (value - it.value) / parent->step;
             }
             
             iterator &operator+= (typename iterator::difference_type n) {
                 if (parent) {
                     T update = value + n * parent->step;
-                    if (update >= value && update <= parent->max) {
+                    if (n <= parent->max && update >= value && update <= parent->max) {
                         value = update;
                     } else {
                         value = T();
@@ -130,9 +122,7 @@ namespace ranges {
             }
             
             const T& operator[] (typename iterator::difference_type n) const {
-                iterator cpy = *this;
-                cpy += n;
-                return cpy;
+                return *(*this + n);
             }
             
             bool operator< (const iterator &it) const { return it.parent == parent && it.value < value; }
