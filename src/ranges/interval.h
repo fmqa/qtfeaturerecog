@@ -7,7 +7,9 @@ namespace ranges {
     template <typename T>
     class interval {
     public:
-        class iterator : public std::iterator<std::random_access_iterator_tag, T> {
+        class iterator 
+            : public std::iterator<std::random_access_iterator_tag, T> 
+        {
             friend class interval;
             iterator (const interval *p, T val) : parent(p), value(val) {}
         public:
@@ -71,7 +73,10 @@ namespace ranges {
                 iterator cpy = *this;
                 if (parent) {
                     cpy.value += n * parent->step;
-                    if (n > parent->max || cpy.value < value || cpy.value > parent->max) {
+                    if (n > parent->max || 
+                        cpy.value < value || 
+                        cpy.value > parent->max) 
+                    {
                         cpy.value = T();
                         cpy.parent = 0;
                     }
@@ -91,14 +96,18 @@ namespace ranges {
                 return cpy;
             }
             
-            typename iterator::difference_type operator- (const iterator &it) const {
+            typename iterator::difference_type 
+            operator- (const iterator &it) const {
                 return (value - it.value) / parent->step;
             }
             
             iterator &operator+= (typename iterator::difference_type n) {
                 if (parent) {
                     T update = value + n * parent->step;
-                    if (n <= parent->max && update >= value && update <= parent->max) {
+                    if (n <= parent->max && 
+                        update >= value && 
+                        update <= parent->max) 
+                    {
                         value = update;
                     } else {
                         value = T();
@@ -125,12 +134,29 @@ namespace ranges {
                 return *(*this + n);
             }
             
-            bool operator< (const iterator &it) const { return it.parent == parent && it.value < value; }
-            bool operator> (const iterator &it) const { return it.parent == parent && it.value > value; }
-            bool operator<= (const iterator &it) const { return it.parent == parent && it.value <= value; }
-            bool operator>= (const iterator &it) const { return it.parent == parent && it.value >= value; }
-            bool operator== (const iterator &it) const { return it.parent == parent && it.value == value; }
-            bool operator!= (const iterator &it) const { return it.parent != parent || it.value != value; }
+            bool operator< (const iterator &it) const { 
+                return it.parent == parent && it.value < value; 
+            }
+            
+            bool operator> (const iterator &it) const { 
+                return it.parent == parent && it.value > value; 
+            }
+            
+            bool operator<= (const iterator &it) const { 
+                return it.parent == parent && it.value <= value;
+            }
+            
+            bool operator>= (const iterator &it) const { 
+                return it.parent == parent && it.value >= value; 
+            }
+            
+            bool operator== (const iterator &it) const { 
+                return it.parent == parent && it.value == value; 
+            }
+            
+            bool operator!= (const iterator &it) const { 
+                return it.parent != parent || it.value != value; 
+            }
         private:
             const interval *parent;
             T value;
