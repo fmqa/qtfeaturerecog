@@ -1,6 +1,8 @@
 #ifndef GAUSSIAN_H
 #define GAUSSIAN_H
 
+#include "conv.h"
+
 namespace rst {
     double gaussian (double, double, double);
     
@@ -32,6 +34,20 @@ namespace rst {
     double gaussian_kernel (T size, double sigma, F k) {
         return gaussian_kernel(size, size, sigma, k);
     }
+    
+    template <int M, int N = M>
+    struct gaussian_filter {
+        explicit gaussian_filter(double sigma) : kernel() { 
+            gaussian_kernel(sigma, kernel); 
+        }
+        
+        template <typename F, typename T>
+        double operator() (F f, T y, T x) const {
+            return conv(kernel, f, y, x);
+        }
+    private:
+        double kernel[M][N];
+    };
 }
 
 #endif /* #ifndef GAUSSIAN_H */

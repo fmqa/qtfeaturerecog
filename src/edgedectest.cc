@@ -51,17 +51,15 @@ int main (int argc, char *argv[]) {
         }
     };
     
-    double gaussian[5][5];
+    rst::gaussian_filter<5> gaussian(0.5);
     
-    rst::gaussian_kernel(0.5, gaussian);
+    //auto x = std::bind(&rst::gaussian_filter<5>::operator()<decltype(fn),int>, gaussian, fn, std::placeholders::_1, std::placeholders::_2);
     
-    rst::canny([&fn,&gaussian](int y, int x) {
-                   return rst::conv(gaussian, fn, y, x);
+    rst::canny([&fn,&gaussian](int y, int x) {                   
+                   return gaussian(fn,y,x);
                }, 
                [&greyv,height,width](int y, int x) -> unsigned char& {
-                   if (x >= 0 && y >= 0 && x < width && y < height) {
-                       return greyv[y * width + x];
-                   }
+                   return greyv[y * width + x];
                }, 
                [](const std::pair<double,double> &ab) {
                    return sqrt(ab.first*ab.first+ab.second*ab.second);
