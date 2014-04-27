@@ -13,6 +13,7 @@
 #include "pnm.h"
 #include "rst/filter/gaussian.h"
 #include "rst/filter/canny.h"
+#include "rst/filter/wrap.h"
 
 int main (int argc, char *argv[]) {
     if (argc < 3) {
@@ -42,21 +43,16 @@ int main (int argc, char *argv[]) {
     std::vector<unsigned char> greyv(width * height);
     
     auto fn = [width,height,&rgbv](int y, int x) {
-        if (x >= 0 && y >= 0 && x < width && y < height) {
-            return (rgbv[3 * (y * width + x)] +
-                    rgbv[3 * (y * width + x) + 1] +
-                    rgbv[3 * (y * width + x) + 2]) / 3;
-        } else {
-            return 0;
-        }
+        return (rgbv[3 * (y * width + x)] +
+                rgbv[3 * (y * width + x) + 1] +
+                rgbv[3 * (y * width + x) + 2]) / 3;
     };
     
-    rst::gaussian_filter<5> gaussian(0.5);
+    auto wrap = rst::make_ext_wrapper(fn, (int)height, (int)width);
+    rst::gaussian_filter<5> gaussian(1.3);
     
-    //auto x = std::bind(&rst::gaussian_filter<5>::operator()<decltype(fn),int>, gaussian, fn, std::placeholders::_1, std::placeholders::_2);
-    
-    rst::canny([&fn,&gaussian](int y, int x) {                   
-                   return gaussian(fn,y,x);
+    rst::canny([&wrap,&gaussian](int y, int x) {                   
+                   return gaussian.apply(wrap, y, x);
                }, 
                [&greyv,height,width](int y, int x) -> unsigned char& {
                    return greyv[y * width + x];
@@ -64,7 +60,7 @@ int main (int argc, char *argv[]) {
                [](const std::pair<double,double> &ab) {
                    return sqrt(ab.first*ab.first+ab.second*ab.second);
                }, 
-               height, width, 1, 10);
+               height, width, 1, 20);
 
     
     std::ofstream pgmf(argv[2], std::ostream::trunc);
