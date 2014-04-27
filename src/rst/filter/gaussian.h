@@ -42,7 +42,7 @@ namespace rst {
         }
         
         template <typename F, typename T>
-        double operator() (F f, T y, T x) const {
+        double apply (F f, T y, T x) const {
             return conv(kernel, f, y, x);
         }
     private:

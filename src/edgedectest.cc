@@ -51,12 +51,10 @@ int main (int argc, char *argv[]) {
         }
     };
     
-    rst::gaussian_filter<5> gaussian(0.5);
+    rst::gaussian_filter<5> gaussian(1.3);
     
-    //auto x = std::bind(&rst::gaussian_filter<5>::operator()<decltype(fn),int>, gaussian, fn, std::placeholders::_1, std::placeholders::_2);
-    
-    rst::canny([&fn,&gaussian](int y, int x) {                   
-                   return gaussian(fn,y,x);
+    rst::canny([fn,&gaussian](int y, int x) {                   
+                   return gaussian.apply(fn, y, x);
                }, 
                [&greyv,height,width](int y, int x) -> unsigned char& {
                    return greyv[y * width + x];
@@ -64,7 +62,7 @@ int main (int argc, char *argv[]) {
                [](const std::pair<double,double> &ab) {
                    return sqrt(ab.first*ab.first+ab.second*ab.second);
                }, 
-               height, width, 1, 10);
+               height, width, 1, 20);
 
     
     std::ofstream pgmf(argv[2], std::ostream::trunc);
