@@ -48,6 +48,7 @@ int main (int argc, char *argv[]) {
                 rgbv[3 * (y * width + x) + 2]) / 3;
     };
     
+    // Edge-Extending wrapper
     auto wrap = rst::make_ext_wrapper(fn, (int)height, (int)width);
     rst::gaussian_filter<5> gaussian(1.3);
     
