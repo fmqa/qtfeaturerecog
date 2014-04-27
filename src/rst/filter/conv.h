@@ -1,8 +1,6 @@
 #ifndef CONV_H
 #define CONV_H
 
-#include <cstddef>
-
 namespace rst {
     template <typename K, typename T, typename F, typename U>
     auto conv (K k, 

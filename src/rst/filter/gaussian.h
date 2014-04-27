@@ -27,7 +27,7 @@ namespace rst {
     template <typename K, int M, int N>
     double gaussian_kernel (double sigma, K (&k)[M][N]) {
         return gaussian_kernel(M, N, sigma,
-                               [&k](int y, int x) -> K& {return k[y][x];});
+                               [&k](int y, int x) -> K& { return k[y][x]; });
     }
     
     template <typename T, typename F>
