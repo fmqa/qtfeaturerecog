@@ -11,10 +11,7 @@
 #include <fstream>
 #include <vector>
 #include "pnm.h"
-#include "rst/filter/gaussian.h"
-#include "rst/filter/canny.h"
-#include "rst/filter/wrap.h"
-#include "rst/util.h"
+#include "edgedec.h"
 
 int main (int argc, char *argv[]) {
     if (argc < 3) {
@@ -43,25 +40,19 @@ int main (int argc, char *argv[]) {
     
     std::vector<unsigned char> greyv(width * height);
     
-    auto fn = [width,height,&rgbv](int y, int x) {
+    auto infn = [width,height,&rgbv](int y, int x) {
         return (rgbv[3 * (y * width + x)] +
                 rgbv[3 * (y * width + x) + 1] +
                 rgbv[3 * (y * width + x) + 2]) / 3;
     };
     
-    // Edge-Extending wrapper
-    auto wrap = rst::make_ext_wrapper(fn, (int)height, (int)width);
-    rst::gaussian_filter<5> gaussian(1.3);
+    auto outfn = [&greyv,height,width](int y, int x) -> unsigned char& {
+        return greyv[y * width + x];
+    };
     
-    rst::canny([&wrap,&gaussian](int y, int x) {                   
-                   return gaussian.apply(wrap, y, x);
-               }, 
-               [&greyv,height,width](int y, int x) -> unsigned char& {
-                   return greyv[y * width + x];
-               }, 
-               rst::fasthypot<std::pair<double,double>>, 
-               height, width, 1, 20);
-
+    auto ed = fr::make_edgedec(infn, outfn, height, width, 1, 30);
+    
+    ed.apply ();
     
     std::ofstream pgmf(argv[2], std::ostream::trunc);
     
