@@ -1,5 +1,5 @@
-#ifndef CIRCLE_FIT_H
-#define CIRCLE_FIT_H
+#ifndef RST_CIRCLE_FIT_H
+#define RST_CIRCLE_FIT_H
 
 #include <utility>
 
@@ -23,4 +23,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef CIRCLE_FIT_H */
+#endif /* #ifndef RST_CIRCLE_FIT_H */

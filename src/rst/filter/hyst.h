@@ -1,5 +1,5 @@
-#ifndef HYST_H
-#define HYST_H
+#ifndef RST_FILTER_HYST_H
+#define RST_FILTER_HYST_H
 
 #include <type_traits>
 #include <limits>
@@ -38,5 +38,5 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef HYST_H */
+#endif /* #ifndef RST_FILTER_HYST_H */
 

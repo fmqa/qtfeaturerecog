@@ -1,5 +1,5 @@
-#ifndef WRAP_H
-#define WRAP_H
+#ifndef RST_WRAP_H
+#define RST_WRAP_H
 
 namespace rst {
     template <typename F, typename T>
@@ -52,4 +52,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef WRAP_H */
+#endif /* #ifndef RST_WRAP_H */

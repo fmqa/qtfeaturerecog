@@ -1,5 +1,5 @@
-#ifndef NMS_H
-#define NMS_H
+#ifndef RST_FILTER_NMS_H
+#define RST_FILTER_NMS_H
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -28,4 +28,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef NMS_H */
+#endif /* #ifndef RST_FILTER_NMS_H */

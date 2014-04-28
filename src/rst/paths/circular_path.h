@@ -1,5 +1,5 @@
-#ifndef CIRCULAR_PATH_H
-#define CIRCULAR_PATH_H
+#ifndef RST_CIRCULAR_PATH_H
+#define RST_CIRCULAR_PATH_H
 
 #include <utility>
 #define _USE_MATH_DEFINES
@@ -131,4 +131,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef CIRCULAR_PATH_H */
+#endif /* #ifndef RST_CIRCULAR_PATH_H */

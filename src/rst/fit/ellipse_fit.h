@@ -1,5 +1,5 @@
-#ifndef ELLIPSE_FIT_H 
-#define ELLIPSE_FIT_H
+#ifndef RST_ELLIPSE_FIT_H 
+#define RST_ELLIPSE_FIT_H
 
 #include <utility>
 #define _USE_MATH_DEFINES
@@ -82,4 +82,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef ELLIPSE_FIT_H */
+#endif /* #ifndef RST_ELLIPSE_FIT_H */

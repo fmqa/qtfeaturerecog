@@ -1,5 +1,5 @@
-#ifndef BRESENHAM_CIRCLE_H
-#define BRESENHAM_CIRCLE_H
+#ifndef RST_BRES_CIRCULAR_PATH_H
+#define RST_BRES_CIRCULAR_PATH_H
 
 #include <type_traits>
 #include <utility>
@@ -104,4 +104,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef BRESENHAM_CIRCLE_H */
+#endif /* #ifndef RST_BRES_CIRCULAR_PATH_H */

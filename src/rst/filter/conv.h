@@ -1,5 +1,5 @@
-#ifndef CONV_H
-#define CONV_H
+#ifndef RST_FILTER_CONV_H
+#define RST_FILTER_CONV_H
 
 namespace rst {
     template <typename K, typename T, typename F, typename U>
@@ -33,4 +33,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef CONV_H */
+#endif /* #ifndef RST_FILTER_CONV_H */

@@ -1,5 +1,5 @@
-#ifndef CANNY_H
-#define CANNY_H
+#ifndef RST_FILTER_CANNY_H
+#define RST_FILTER_CANNY_H
 
 #include "nms.h"
 #include "hyst.h"
@@ -12,4 +12,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef CANNY_H */
+#endif /* #ifndef RST_FILTER_CANNY_H */

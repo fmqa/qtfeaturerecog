@@ -1,5 +1,5 @@
-#ifndef GAUSSIAN_H
-#define GAUSSIAN_H
+#ifndef RST_FILTER_GAUSSIAN_H
+#define RST_FILTER_GAUSSIAN_H
 
 #include "conv.h"
 
@@ -50,4 +50,4 @@ namespace rst {
     };
 }
 
-#endif /* #ifndef GAUSSIAN_H */
+#endif /* #ifndef RST_FILTER_GAUSSIAN_H */

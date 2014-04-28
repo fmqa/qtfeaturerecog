@@ -1,5 +1,5 @@
-#ifndef SOBEL_H 
-#define SOBEL_H
+#ifndef RST_FILTER_SOBEL_H 
+#define RST_FILTER_SOBEL_H
 
 #include <utility>
 #include "conv.h"
@@ -15,4 +15,4 @@ namespace rst {
     }
 }
 
-#endif /* #ifndef SOBEL_H */
+#endif /* #ifndef RST_FILTER_SOBEL_H */
