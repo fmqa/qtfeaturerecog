@@ -14,6 +14,7 @@
 #include "rst/filter/gaussian.h"
 #include "rst/filter/canny.h"
 #include "rst/filter/wrap.h"
+#include "rst/util.h"
 
 int main (int argc, char *argv[]) {
     if (argc < 3) {
@@ -58,9 +59,7 @@ int main (int argc, char *argv[]) {
                [&greyv,height,width](int y, int x) -> unsigned char& {
                    return greyv[y * width + x];
                }, 
-               [](const std::pair<double,double> &ab) {
-                   return sqrt(ab.first*ab.first+ab.second*ab.second);
-               }, 
+               rst::fasthypot<std::pair<double,double>>, 
                height, width, 1, 20);
 
     
