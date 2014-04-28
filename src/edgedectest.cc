@@ -1,8 +1,8 @@
 /**
  * 
- * Sobel Operator test case.
+ * Console edge detection demo.
  * 
- * Compile with g++ -std=c++11 -Wall sobeltest.cc
+ * Compile with g++ -std=c++11 -Wall sobeltest.cc rst/filter/gaussian.cc rst/filter/sobel.cc
  * 
  * 
  */
