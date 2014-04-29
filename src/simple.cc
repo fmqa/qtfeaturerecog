@@ -5,7 +5,7 @@
 #include "rst/filter/gaussian.h"
 #include "rst/filter/canny.h"
 
-static rst::gaussian_filter<3> stdgaussian(1.0);
+static const rst::gaussian_flt<3> gauss3x3(1.0);
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     
     auto wrapper = rst::make_ext_wrapper([&in](int y, int x){return qGray(in.pixel(x, y));},
                                          in.height(), in.width());
-    rst::canny([&wrapper](int y, int x){return stdgaussian.apply(wrapper,y,x);},
+    
+    rst::canny(gauss3x3.bind(wrapper),
                [&out](int y, int x)->unsigned char & {return out.scanLine(y)[x];},
                (double(*)(double,double))std::hypot,
                in.height(), in.width(), 1, 30);
