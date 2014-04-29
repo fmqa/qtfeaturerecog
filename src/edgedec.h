@@ -10,63 +10,22 @@
 namespace fr {
     template <typename F, typename G>
     class edgedec {
+        rst::gaussian_filter<3> gaussian;
+    public:
         rst::ext_wrapper<F,int> in;
         G out;
-        rst::gaussian_filter<3> gaussian;
         double minthresh;
         double maxthresh;
         bool blurring;
-        double (*hypot)(const std::pair<double,double> &);
-    public:
-        edgedec (
+        rst::hypot_fn_t<double> hypot;
+        
+        edgedec(
             F f, G g, int m, int n,
-            double minthrsh, double maxthrsh, bool blur = true,
-            double (*hyp)(const std::pair<double,double> &) = rst::fasthypot)
-        : in(f, m, n), out(g), gaussian(1.0),
-          minthresh(minthrsh), maxthresh(maxthrsh), 
+            double mint, double maxt, bool blur = true,
+            rst::hypot_fn_t<double> hyp = rst::fasthypot)
+        : gaussian(1.0), in(f, m, n), out(g),
+          minthresh(mint), maxthresh(maxt), 
           blurring(blur), hypot(hyp) {}
-        
-        double min_threshold () const {
-            return minthresh;
-        }
-        
-        double min_threshold (double mt) {
-            double old = minthresh;
-            minthresh = mt;
-            return old;
-        }
-        
-        double max_threshold () const {
-            return maxthresh;
-        }
-        
-        double max_threshold (double mt) {
-            double old = maxthresh;
-            maxthresh = mt;
-            return old;
-        }
-        
-        bool blur () const {
-            return blurring;
-        }
-        
-        bool blur (bool blr) {
-            bool old = blurring;
-            blurring = blr;
-            return old;
-        }
-        
-        auto hypotfn () const -> double(*)(const std::pair<double,double> &) {
-            return hypot;
-        }
-        
-        auto hypotfn (double (*h)(const std::pair<double,double> &)) 
-            -> double(*)(const std::pair<double,double> &) 
-        {
-            double (*old)(const std::pair<double,double> &) = hypot;
-            hypot = h;
-            return old;
-        }
         
         void apply () const {
             if (blurring) {
@@ -88,7 +47,7 @@ namespace fr {
         F f, G g, int m, int n,
         double mint, double maxt,
         bool blur = true,
-        double (*hyp)(const std::pair<double,double> &) = rst::fasthypot)
+        rst::hypot_fn_t<double> hyp = rst::fasthypot)
     {
         return edgedec<F,G>(f, g, m, n, mint, maxt, blur, hyp);
     }

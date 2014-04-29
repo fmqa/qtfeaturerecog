@@ -7,7 +7,7 @@ namespace rst {
     private:
         F fn;
     public:
-        const T height, width;
+        T height, width;
         explicit ext_wrapper(F f, T m, T n) : fn(f), height(m), width(n) {}
         auto operator() (T y, T x) -> decltype(fn(y, x)) {
             if (x >= 0 && x < width) {

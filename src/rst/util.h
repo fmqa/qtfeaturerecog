@@ -31,6 +31,9 @@ namespace rst {
         }
     }
     
+    template <typename T, template <typename...> class U = std::pair>
+    using hypot_fn_t = T (*)(const U<T,T> &);
+    
     template <typename T>
     auto trghypot (const T &t) -> 
         decltype(sizeof(__rst_util_detail::trghypot(t)),
