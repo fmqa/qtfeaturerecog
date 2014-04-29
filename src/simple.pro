@@ -10,8 +10,7 @@ TARGET = simple
 INCLUDEPATH += . rst rst/filter
 
 # Input
-HEADERS += rst/util.h \
-           rst/wrap.h \
+HEADERS += rst/wrap.h \
            rst/filter/canny.h \
            rst/filter/conv.h \
            rst/filter/gaussian.h \
