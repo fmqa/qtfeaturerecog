@@ -2,7 +2,6 @@
 #include <QImage>
 #include <QLabel>
 #include "rst/wrap.h"
-#include "rst/util.h"
 #include "rst/filter/gaussian.h"
 #include "rst/filter/canny.h"
 
@@ -31,7 +30,7 @@ int main(int argc, char *argv[])
     auto wrapper = rst::make_ext_wrapper(ImageProxy(&in), in.height(), in.width());
     rst::canny([&wrapper](int y, int x){return stdgaussian.apply(wrapper,y,x);},
                ImageProxy(&out),
-               rst::fasthypot<std::pair<double,double>>,
+               (double(*)(double,double))std::hypot,
                in.height(), in.width(), 1, 30);
     
     QLabel myLabel;
