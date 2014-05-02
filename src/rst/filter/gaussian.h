@@ -25,6 +25,11 @@ namespace rst {
         return sum;
     }
     
+    template <typename F>
+    double kgaussian (F k, double sigma) {
+        return kgaussian(k, rows(k), columns(k), sigma);
+    }
+    
     template <typename F, typename T>
     double kgaussian (F k, T size, double sigma) {
         return kgaussian(k, size, size, sigma);
@@ -37,33 +42,14 @@ namespace rst {
     }
     
     template <int M, int N = M>
-    struct gaussian_flt {
-        template <typename F>
-        struct bound {
-            friend struct gaussian_flt;
-        private:
-            const gaussian_flt *parent;
-            F fn;
-            bound(const gaussian_flt *p, F f) : parent(p), fn(f) {}
-        public:
-            template <typename T>
-            auto operator()(T y, T x) -> decltype(fn(y, x)) {
-                return parent->apply(fn, y, x);
-            }
-        };
-        
-        explicit gaussian_flt(double sigma) : kernel() { 
+    struct fgaussian {
+        explicit fgaussian(double sigma) : kernel() { 
             kgaussian(kernel, sigma); 
         }
         
         template <typename F, typename T>
-        double apply (F f, T y, T x) const {
+        double operator() (F f, T y, T x) const {
             return conv(kernel, f, y, x);
-        }
-        
-        template <typename F>
-        bound<F> bind (F fn) const {
-            return bound<F>(this, fn);
         }
     private:
         double kernel[M][N];

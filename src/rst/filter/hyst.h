@@ -2,6 +2,7 @@
 #define RST_FILTER_HYST_H
 
 #include <limits>
+#include "../dim.h"
 
 namespace rst {
     template <typename F, typename G, typename T, typename U>
@@ -33,6 +34,11 @@ namespace rst {
                 }
             }
         }
+    }
+    
+    template <typename F, typename G, typename T>
+    void hyst (F f, G g, T tmin, T tmax) {
+        hyst (f, g, rows(f), columns(f), tmin, tmax);
     }
 }
 

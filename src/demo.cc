@@ -4,8 +4,9 @@
 #include "rst/wrap.h"
 #include "rst/filter/gaussian.h"
 #include "rst/filter/canny.h"
+#include "rst/adapters/qt.h"
 
-static const rst::gaussian_flt<3> gauss3x3(1.0);
+static const rst::fgaussian<3> blur(1.0);
 
 int main(int argc, char *argv[])
 {
@@ -21,13 +22,10 @@ int main(int argc, char *argv[])
     }
     out.setColorTable(grays);
     
-    auto wrapper = rst::make_ext_wrapper([&in](int y, int x){return qGray(in.pixel(x, y));},
-                                         in.height(), in.width());
-    
-    rst::canny(gauss3x3.bind(wrapper),
-               [&out](int y, int x)->unsigned char & {return out.scanLine(y)[x];},
+    rst::canny(rst::mbind(blur, rst::bndextwrap<int>(rst::qgrayimageadp(&in))),
+               rst::qmutableimageadp<unsigned char>(&out),
                (double(*)(double,double))std::hypot,
-               in.height(), in.width(), 1, 30);
+               1, 30);
     
     QLabel myLabel;
     myLabel.setPixmap(QPixmap::fromImage(out));
