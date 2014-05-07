@@ -5,12 +5,12 @@
 
 namespace rst {
     template <typename K, typename F>
-    struct bound {
+    struct boundfn {
     private:
         K convfn;
         F fn;
     public:
-        bound (K k, F f) : convfn(k), fn(f) {}
+        boundfn (K k, F f) : convfn(k), fn(f) {}
         
         template <typename T>
         auto operator()(T y, T x) -> decltype(convfn(fn, y, x)) {
@@ -19,12 +19,12 @@ namespace rst {
     };
     
     template <typename K, typename M>
-    struct boundm {
+    struct boundmat {
     private:
         K convfn;
         M mat;
     public:
-        boundm (K k, M m) : convfn(k), mat(m) {}
+        boundmat (K k, M m) : convfn(k), mat(m) {}
         
         template <typename T>
         auto operator()(T y, T x) -> decltype(convfn(mat, y, x)) {
@@ -50,8 +50,8 @@ namespace rst {
      * \param f A 2D-Function.
      */
     template <typename K, typename F>
-    bound<K,F> fbind (K k, F f) {
-        return bound<K,F>(k, f);
+    boundfn<K,F> bindfn (K k, F f) {
+        return boundfn<K,F>(k, f);
     }
     
     /// Binds a convolution function k(f,y,x) to a matrix-view with defined
@@ -63,8 +63,8 @@ namespace rst {
      * \param m A matrix.
      */
     template <typename K, typename M>
-    boundm<K,M> mbind (K k, M m) {
-        return boundm<K,M>(k, m);
+    boundmat<K,M> bindmat (K k, M m) {
+        return boundmat<K,M>(k, m);
     }
 }
 

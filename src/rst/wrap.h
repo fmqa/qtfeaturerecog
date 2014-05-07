@@ -5,7 +5,7 @@
 
 namespace rst {
     template <typename F, typename T, typename U>
-    auto extendwrap (F f, T m, T n, U y, U x) -> decltype(f(y,x)) {
+    auto fnextwrap (F f, T m, T n, U y, U x) -> decltype(f(y,x)) {
         if (x >= 0 && x < n) {
             if (y < 0) {
                 return f(0, x);
@@ -41,16 +41,16 @@ namespace rst {
         return f(y, x);
     }
     
-    template <typename F, typename T>
-    auto extendwrap (F f, T y, T x) 
-        -> decltype(extendwrap(f, rows(f), columns(f), y, x))
+    template <typename M, typename T>
+    auto matextwrap (M m, T y, T x) 
+        -> decltype(fnextwrap(m, rows(m), columns(m), y, x))
     {
-        return extendwrap(f, rows(f), columns(f), y, x);
+        return fnextwrap(m, rows(m), columns(m), y, x);
     }
     
     template <typename T, typename M>
-    auto bndextwrap (M m) -> decltype(mbind(extendwrap<M,T>, m)) {
-        return mbind(extendwrap<M,T>, m);
+    auto extwrappedmat (M m) -> decltype(bindmat(matextwrap<M,T>, m)) {
+        return bindmat(matextwrap<M,T>, m);
     }
 }
 

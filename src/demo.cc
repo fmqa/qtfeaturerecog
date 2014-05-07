@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     }
     out.setColorTable(grays);
     
-    rst::canny(rst::mbind(blur, rst::bndextwrap<int>(rst::qgrayimageadp(&in))),
+    rst::canny(rst::bindmat(blur, rst::extwrappedmat<int>(rst::qgrayimageadp(&in))),
                rst::qmutableimageadp<unsigned char>(&out),
                (double(*)(double,double))std::hypot,
                1, 30);
