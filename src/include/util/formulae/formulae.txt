@@ -1,0 +1,11 @@
+Formula A:
+https://www.wolframalpha.com/input/?i=det%28{{1%2C2ab%2Cb^2}%2C{1%2C2cd%2Cd^2}%2C{1%2C2fg%2Cg^2}}%29
+
+Formula B:
+https://www.wolframalpha.com/input/?i=det%28{{a^2%2C1%2Cb^2}%2C{c^2%2C1%2Cd^2}%2C{d^2%2C1%2Cg^2}}%29
+
+Formula C:
+https://www.wolframalpha.com/input/?i=det%28{{a^2%2C2ab%2C1}%2C{c^2%2C2cd%2C1}%2C{d^2%2C2fg%2C1}}%29
+
+Formula k:
+https://www.wolframalpha.com/input/?i=det%28{{a^2%2C2ab%2Cb^2}%2C{c^2%2C2cd%2Cd^2}%2C{d^2%2C2fg%2Cg^2}}%29
