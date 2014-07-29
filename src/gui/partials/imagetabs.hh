@@ -18,6 +18,8 @@ namespace mm {
         tab currentTab() const;
         void switchTab(tab);
         void setTabPixmap(tab, QPixmap const &);
+        void saveCurrentTabImage();
+        void currentTabImageToClipboard();
     private:
         QTabWidget *tabWidget;
         QScrollArea *scrollAreaSrc, *scrollAreaEdges, *scrollAreaTransform,

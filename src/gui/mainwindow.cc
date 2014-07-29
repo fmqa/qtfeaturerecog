@@ -103,11 +103,29 @@ void mm::MainWindow::open() {
     imageTabsWidget->switchTab(ImageTabs::srctab);
 }
 
+void mm::MainWindow::save() {
+    imageTabsWidget->saveCurrentTabImage();
+}
+
+void mm::MainWindow::copyToClipboard() {
+    imageTabsWidget->currentTabImageToClipboard();
+}
+
 void mm::MainWindow::createActions() {
     openAct = new QAction(QIcon::fromTheme("document-open"), tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an image file"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+    
+    saveAct = new QAction(QIcon::fromTheme("document-save"), tr("&Save..."), this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip(tr("Save the active image"));
+    connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+    
+    copyAct = new QAction(QIcon::fromTheme("edit-copy"), tr("&Copy..."), this);
+    copyAct->setShortcuts(QKeySequence::Copy);
+    copyAct->setStatusTip(tr("Copy the active image to clipboard"));
+    connect(copyAct, SIGNAL(triggered()), this, SLOT(copyToClipboard()));
     
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
@@ -135,6 +153,8 @@ void mm::MainWindow::createActions() {
 void mm::MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openAct);
+    fileMenu->addAction(saveAct);
+    fileMenu->addAction(copyAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
     

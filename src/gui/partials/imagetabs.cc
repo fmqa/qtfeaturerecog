@@ -2,6 +2,11 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QPixmap>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QApplication>
+#include <QClipboard>
 #include "imagetabs.hh"
 
 mm::ImageTabs::ImageTabs(QWidget *parent) : QWidget(parent) {
@@ -70,3 +75,64 @@ void mm::ImageTabs::setTabPixmap(mm::ImageTabs::tab tabid, QPixmap const &pixmap
         default: break;
     }
 }
+
+void mm::ImageTabs::saveCurrentTabImage() {
+    const QPixmap *pmap = 0;
+    
+    switch (currentTab()) {
+        case srctab: pmap = labelSrc->pixmap(); break;
+        case edgetab: pmap = labelEdges->pixmap(); break;
+        case transformtab: pmap = labelTransform->pixmap(); break;
+        case histogramtab: pmap = labelHistogram->pixmap(); break;
+        default: break;
+    }
+    
+    if (pmap && !pmap->isNull()) {
+        QFileDialog dlg(this, tr("Save image..."), QString(), tr("Images (*.png *.jpg)"));
+        dlg.setDefaultSuffix(".png");
+        dlg.setAcceptMode(QFileDialog::AcceptSave);
+        
+        if (dlg.exec()) {
+            QStringList selection = dlg.selectedFiles();
+            
+            if (selection.empty()) {
+                return;
+            }
+            
+            const QString &saveFile = selection.first();
+            
+            if (!pmap->save(saveFile)) {
+                QMessageBox msg(QMessageBox::Warning,
+                                tr("HoughStudio error"),
+                                tr("Error saving file"),
+                                0, this);
+                msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
+                msg.exec();
+            }
+        }
+    } else {
+        QMessageBox msg(QMessageBox::Warning,
+                        tr("HoughStudio error"),
+                        tr("Can't save empty image"),
+                        0, this);
+        msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
+        msg.exec();
+    }
+}
+
+void mm::ImageTabs::currentTabImageToClipboard() {
+    const QPixmap *pmap = 0;
+    
+    switch (currentTab()) {
+        case srctab: pmap = labelSrc->pixmap(); break;
+        case edgetab: pmap = labelEdges->pixmap(); break;
+        case transformtab: pmap = labelTransform->pixmap(); break;
+        case histogramtab: pmap = labelHistogram->pixmap(); break;
+        default: break;
+    }
+    
+    if (pmap && !pmap->isNull()) {
+        QApplication::clipboard()->setPixmap(*pmap);
+    }
+}
+

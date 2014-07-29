@@ -27,6 +27,8 @@ namespace mm {
         MainWindow();
     private slots:
         void open();
+        void save();
+        void copyToClipboard();
         void displaySourceImage();
         void displayEdgeImage();
         void displayTransformedImage();
@@ -55,7 +57,7 @@ namespace mm {
         
         QMenu *fileMenu;
         QToolBar *fileToolBar;
-        QAction *openAct, *exitAct;
+        QAction *openAct, *saveAct, *copyAct, *exitAct;
         
         QMenu *viewMenu;
         QAction *viewSourceImageAct, *viewEdgeImageAct, *viewTransformedImageAct, *activateFullScreenAct;
