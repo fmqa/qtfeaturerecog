@@ -80,6 +80,7 @@ mm::MainWindow::MainWindow() {
     QHBoxLayout *mainLayout = new QHBoxLayout;
     
     QWidget *toolbox = new QWidget;
+    toolbox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
     toolbox->setLayout(toolboxLayout);
     mainLayout->addWidget(toolbox);
     
