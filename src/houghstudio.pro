@@ -9,16 +9,16 @@ QT += widgets
 QMAKE_CXXFLAGS += -g -Wall -std=c++11
 
 # Input
-HEADERS += gui/mainwindow.hh \
+HEADERS += gui/ui.hh \
+           gui/controller.hh \
            gui/partials/edgeoptions.hh \
            gui/partials/circleoptions.hh \
            gui/partials/ellipseoptions.hh \
            gui/partials/imagetabs.hh \
-           gui/modeladapter.hh \
            gui/workers/edgeworker.hh \
            gui/workers/circleworker.hh \
            gui/workers/ellipseworker.hh \
-           model/ellipse_detector.hh \
+           util/ellipsehough.hh \
            include/raster/util/view2d.hh \
            include/raster/util/flat_accumulator.hh
 #           rst/compose.h \
@@ -40,12 +40,12 @@ HEADERS += gui/mainwindow.hh \
 #           rst/mat/bitvec_mat.h \
 #           rst/mat/observable_mat.h
 SOURCES += gui/main.cc \
-           gui/mainwindow.cc \
+           gui/ui.cc \
+           gui/controller.cc \
            gui/partials/edgeoptions.cc \
            gui/partials/circleoptions.cc \
            gui/partials/ellipseoptions.cc \
            gui/partials/imagetabs.cc \
-           gui/modeladapter.cc \
            gui/workers/edgeworker.cc \
            gui/workers/circleworker.cc \
            gui/workers/ellipseworker.cc \

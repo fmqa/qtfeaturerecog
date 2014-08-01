@@ -1,40 +1,38 @@
 #ifndef ELLIPSEWORKER_HH
 #define ELLIPSEWORKER_HH
 
+#include <utility>
+#include <vector>
 #include <QObject>
 #include <QVector>
-#include <raster/util/view2d.hh>
+#include <QImage>
+#include "../../util/ellipsehough.hh"
 
-class QImage;
 
 namespace mm {
-    class ellipse_detector;
-    
     class EllipseWorker : public QObject {
         Q_OBJECT
     public:
-        EllipseWorker(const ellipse_detector &,
-                      const QVector<std::pair<int,int>> &,
-                      const raster::view2d<std::vector<bool>,int> &,
-                      QImage &,
-                      QImage &);
+        EllipseWorker(const ellipserange &r,
+                      QVector<std::pair<int,int>>,
+                      std::vector<bool>,
+                      QImage);
         int currentX() const;
         int currentY() const;
-        int ellipseCount() const;
+        int count() const;
     public slots:
         void work();
     signals:
         void started();
         void finished();
     private:
-        const ellipse_detector *model;
-        const QVector<std::pair<int,int>> *edgeList;
-        const raster::view2d<std::vector<bool>,int> *edgeMap;
-        QImage *in;
-        QImage *out;
+        ellipserange rng;
+        QVector<std::pair<int,int>> lst;
+        std::vector<bool> bits;
+        QImage io;
         int px;
         int py;
-        int count;
+        int num;
     };
 }
 

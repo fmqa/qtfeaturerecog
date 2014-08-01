@@ -24,7 +24,7 @@ namespace raster {
         }
         
         template <typename U, typename V>
-        V set(U y, U x, V value) {
+        V set(U y, U x, V value) const {
             return (*vector)[y * width + x] = value;
         }
         

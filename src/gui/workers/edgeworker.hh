@@ -2,9 +2,10 @@
 #define GUI_EDGEWORKER_HH
 
 #include <utility>
+#include <vector>
 #include <QObject>
 #include <QVector>
-#include <raster/util/view2d.hh>
+#include <QImage>
 
 class QImage;
 
@@ -17,11 +18,13 @@ namespace mm {
         EdgeWorker(int,
                    int,
                    int,
-                   QVector<std::pair<int,int>> &,
-                   raster::view2d<std::vector<bool>,int> &,
-                   QImage &);
-        int currentX() const;
-        int currentY() const;
+                   QImage);
+        int x() const;
+        int y() const;
+        QImage result() const;
+        QVector<std::pair<int,int>> list() const;
+        std::vector<bool> bitmap() const;
+        int count() const;
     public slots:
         void work();
     signals:
@@ -31,9 +34,9 @@ namespace mm {
         int minThresh;
         int maxThresh;
         int blurRadius;
-        QVector<std::pair<int,int>> *edgeList;
-        raster::view2d<std::vector<bool>,int> *edgeMap;
-        QImage *in;
+        QVector<std::pair<int,int>> lst;
+        std::vector<bool> bits;
+        QImage in, out;
         int py;
         int px;
     };

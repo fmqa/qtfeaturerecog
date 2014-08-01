@@ -3,9 +3,9 @@
 
 #include <utility>
 #include <QObject>
-
-class QImage;
-template <typename T> class QVector;
+#include <QImage>
+#include <QVector>
+#include <QColor>
 
 namespace mm {
     class CircleWorker : public QObject {
@@ -17,11 +17,12 @@ namespace mm {
                      int,
                      int,
                      int,
-                     const QVector<std::pair<int,int>> &,
-                     QImage &,
-                     QImage &,
+                     QVector<std::pair<int,int>>,
+                     QImage,
+                     QColor,
                      mode = trigonometric);
         int count() const;
+        QImage result() const;
     public slots:
         void work();
     signals:
@@ -32,9 +33,9 @@ namespace mm {
         int rmax;
         int smin;
         int smax;
-        const QVector<std::pair<int,int>> *edges;
-        QImage *in;
-        QImage *out;
+        QVector<std::pair<int,int>> edges;
+        QImage out;
+        QColor marker;
         int circles;
         mode plotmode;
     };

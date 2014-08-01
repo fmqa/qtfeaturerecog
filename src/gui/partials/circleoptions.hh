@@ -2,8 +2,11 @@
 #define GUI_CIRCLEOPTIONS_HH
 
 #include <QWidget>
+#include <QImage>
 
 class QSpinBox;
+class QLabel;
+class QPushButton;
 
 namespace mm {
     class CircleOptions : public QWidget {
@@ -19,15 +22,23 @@ namespace mm {
         CircleOptions& setMaxRadius(int);
         CircleOptions& setMinScore(int);
         CircleOptions& setMaxScore(int);
+        QColor getColor() const;
     private slots:
         void onValueChanged(int);
+        void pickColor();
     signals:
         void changed();
     private:
+        void setColor();
+    private:
+        QImage markerImage;
+        QColor markerColor;
         QSpinBox *minRadiusSpinBox;
         QSpinBox *maxRadiusSpinBox;
         QSpinBox *minScoreSpinBox;
         QSpinBox *maxScoreSpinBox;
+        QLabel *colorLabel;
+        QPushButton *colorPickBtn;
     };
 }
 
