@@ -29,6 +29,7 @@ namespace mm {
         QString requestImage();
         void alertInvalidSourceImage(const QString &);
         void alertExtractEdges();
+        void alertEmptySourceImage();
     public slots:
         void enableControls();
         void disableControls();

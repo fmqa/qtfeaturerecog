@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QColorDialog>
+#include <QCheckBox>
 #include "circleoptions.hh"
 
 mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage(10, 5, QImage::Format_RGB32), markerColor(qRgb(255,0,0)) {
@@ -40,6 +41,14 @@ mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage
                 hbox->addWidget(new QLabel(tr("Marker color:")));
                 hbox->addWidget(colorLabel = new QLabel);
                 hbox->addWidget(colorPickBtn = new QPushButton("..."));
+            container->setLayout(hbox);
+            vbox->addWidget(container);
+        }
+        
+        {
+            QWidget *container = new QWidget;
+            QHBoxLayout *hbox = new QHBoxLayout;
+                hbox->addWidget(chkHistogram = new QCheckBox(tr("Histogram")));
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
@@ -124,4 +133,8 @@ void mm::CircleOptions::setColor() {
         painter.fillRect(0, 0, 10, 5, markerColor);
     }
     colorLabel->setPixmap(QPixmap::fromImage(markerImage));
+}
+
+bool mm::CircleOptions::histogram() const {
+    return chkHistogram->isChecked();
 }

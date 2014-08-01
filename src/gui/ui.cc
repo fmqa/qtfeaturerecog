@@ -175,3 +175,12 @@ void mm::Ui::disableControls() {
     controls.detectedges->setEnabled(false);
     controls.applytransfm->setEnabled(false);
 }
+
+void mm::Ui::alertEmptySourceImage() {
+    QMessageBox msg(QMessageBox::Warning,
+                    tr("HoughStudio error"),
+                    tr("Please load an image first"),
+                    0, this);
+    msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
+    msg.exec();
+}

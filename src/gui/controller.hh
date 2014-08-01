@@ -15,6 +15,9 @@
 #include "ui.hh"
 
 namespace mm {
+    class EdgeWorker;
+    class CircleWorker;
+    
     class controller : public QObject {
         Q_OBJECT
     public:
@@ -38,6 +41,12 @@ namespace mm {
             imagedata source;
             edgedata edges;
             transfmdata transfm;
+            QImage histogram;
+        };
+        
+        struct workerdata {
+            EdgeWorker *edges;
+            CircleWorker *circles;
         };
     public:
         explicit controller();
@@ -57,9 +66,16 @@ namespace mm {
         void detectedges();
         void applytransfm();
         void stop();
+        void updateEdgeProgress();
+        void updateCircleProgress();
+        void clearAndSwitchToImageTab();
+        void clearAndSwitchToTransfmTab();
+        void displayEdgeResults();
+        void updateHistogram();
     private:
         Ui ui;
         statedata state;
+        workerdata workers;
         QThread *thread;
         QTimer *timer;
     };

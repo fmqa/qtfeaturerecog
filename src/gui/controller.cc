@@ -61,6 +61,7 @@ void mm::controller::open() {
     state.edges.bitmap = std::vector<bool>();
     state.transfm.image = QImage();
     state.transfm.features = 0;
+    state.histogram = QImage();
     ui.images->switchTab(ImageTabs::srctab);
 }
 
@@ -97,47 +98,31 @@ void mm::controller::fullscr(bool checked) {
 }
 
 void mm::controller::detectedges() {
+    if (state.source.image.isNull()) {
+        ui.alertEmptySourceImage();
+        return;
+    }
+    
     stop();
     
     thread = new QThread(this);
     timer = new QTimer(this);
     
-    mm::EdgeWorker *worker = new mm::EdgeWorker(
+    workers.edges = new EdgeWorker(
         ui.options.edges->minThreshold(),
         ui.options.edges->maxThreshold(),
         ui.options.edges->blurEnabled() ? ui.options.edges->blurRadius() : 0,
         state.source.image);
     
-    QObject::connect(thread, &QThread::started, worker, &mm::EdgeWorker::work);
+    connect(thread, SIGNAL(started()), workers.edges, SLOT(work()));
+    connect(workers.edges, SIGNAL(started()), &ui, SLOT(disableControls()));
+    connect(workers.edges, SIGNAL(started()), this, SLOT(clearAndSwitchToImageTab()));
+    connect(workers.edges, SIGNAL(finished()), &ui, SLOT(enableControls()));
+    connect(workers.edges, SIGNAL(finished()), this, SLOT(displayEdgeResults()));
+    connect(workers.edges, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateEdgeProgress()));
     
-    QObject::connect(worker, &mm::EdgeWorker::started, &ui, &mm::Ui::disableControls);
-    
-    QObject::connect(worker, &mm::EdgeWorker::started, [this]() {
-        ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap());
-        ui.images->switchTab(mm::ImageTabs::edgetab);
-    });
-    
-    QObject::connect(worker, &mm::EdgeWorker::finished, &ui, &mm::Ui::enableControls);
-    
-    QObject::connect(worker, &mm::EdgeWorker::finished, [this,worker]() {
-        state.edges.image = worker->result();
-        state.edges.list = worker->list();
-        state.edges.bitmap = worker->bitmap();
-        ui.statusBar()->showMessage(QObject::tr("%1 edges detected").arg(state.edges.list.size()));
-        ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap::fromImage(state.edges.image));
-        ui.images->switchTab(mm::ImageTabs::edgetab);
-    });
-    
-    QObject::connect(worker, &mm::EdgeWorker::finished, thread, &QThread::quit);
-    
-    QObject::connect(timer, &QTimer::timeout, [this,worker](){
-        if (thread->isRunning()) {
-            ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap::fromImage(worker->result()));
-            ui.statusBar()->showMessage(QObject::tr("%1 edges detected").arg(worker->count()));
-        }
-    });
-    
-    worker->moveToThread(thread);
+    workers.edges->moveToThread(thread);
     thread->start();
     timer->start(100);
 }
@@ -153,48 +138,52 @@ void mm::controller::applycircletransfm() {
     thread = new QThread(this);
     timer = new QTimer(this);
     
-    mm::CircleWorker *worker = new mm::CircleWorker(
+    workers.circles = new CircleWorker(
             ui.options.circles->minRadius(),
             ui.options.circles->maxRadius(),
             ui.options.circles->minScore(),
             ui.options.circles->maxScore(),
             state.edges.list,
             state.source.image,
-            ui.options.circles->getColor());
+            ui.options.circles->getColor(),
+            ui.options.circles->histogram());
     
-    QObject::connect(thread, &QThread::started, worker, &mm::CircleWorker::work);
+    connect(thread, SIGNAL(started()), workers.circles, SLOT(work()));
+    connect(workers.circles, SIGNAL(started()), &ui, SLOT(disableControls()));
+    connect(workers.circles, SIGNAL(started()), this, SLOT(clearAndSwitchToTransfmTab()));
+    connect(workers.circles, SIGNAL(finished()), &ui, SLOT(enableControls()));
+    connect(workers.circles, SIGNAL(finished()), this, SLOT(updateCircleProgress()));
+    if (ui.options.circles->histogram()) {
+        connect(workers.circles, SIGNAL(finished()), this, SLOT(updateHistogram()));
+    }
+    connect(workers.circles, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCircleProgress()));
     
-    QObject::connect(worker, &mm::CircleWorker::started, &ui, &mm::Ui::disableControls);
-    
-    QObject::connect(worker, &mm::CircleWorker::started, [this]() {
-        ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap());
-        ui.images->switchTab(mm::ImageTabs::transformtab);
-    });
-    
-    QObject::connect(worker, &mm::CircleWorker::finished, &ui, &mm::Ui::enableControls);
-    
-    QObject::connect(worker, &mm::CircleWorker::finished, [this,worker]() {
-        state.transfm.image = worker->result();
-        state.transfm.features = worker->count();
-        ui.statusBar()->showMessage(QObject::tr("%1 circles detected").arg(state.transfm.features));
-        ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
-    });
-    
-    QObject::connect(worker, &mm::CircleWorker::finished, thread, &QThread::quit);
-    
-    QObject::connect(timer, &QTimer::timeout, [this,worker](){
-        if (thread->isRunning()) {
-            ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(worker->result()));
-            ui.statusBar()->showMessage(QObject::tr("%1 circles detected").arg(worker->count()));
-        }
-    });
-    
-    worker->moveToThread(thread);
+    workers.circles->moveToThread(thread);
     thread->start();
     timer->start(100);
 }
 
 void mm::controller::applyellipsetransfm() {
+}
+
+void mm::controller::clearAndSwitchToImageTab() {
+    ui.images->setTabPixmap(ImageTabs::edgetab, QPixmap());
+    ui.images->switchTab(ImageTabs::edgetab);
+}
+
+void mm::controller::clearAndSwitchToTransfmTab() {
+    ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap());
+    ui.images->switchTab(mm::ImageTabs::transformtab);
+}
+
+void mm::controller::displayEdgeResults() {
+    state.edges.image = workers.edges->result();
+    state.edges.list = workers.edges->list();
+    state.edges.bitmap = workers.edges->bitmap();
+    ui.statusBar()->showMessage(tr("%1 edges detected").arg(state.edges.list.size()));
+    ui.images->setTabPixmap(ImageTabs::edgetab, QPixmap::fromImage(state.edges.image));
+    ui.images->switchTab(ImageTabs::edgetab);
 }
 
 void mm::controller::applytransfm() {
@@ -207,10 +196,29 @@ void mm::controller::applytransfm() {
 
 void mm::controller::stop() {
     if (thread && thread->isRunning()) {
-        thread->quit();
+        thread->terminate();
     }
     if (timer && timer->isActive()) {
         timer->stop();
     }
+    ui.enableControls();
 }
 
+void mm::controller::updateEdgeProgress() {
+    if (thread->isRunning()) {
+        ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap::fromImage(workers.edges->result()));
+        ui.statusBar()->showMessage(QObject::tr("%1 edges detected").arg(workers.edges->count()));
+    }
+}
+
+void mm::controller::updateCircleProgress() {
+    state.transfm.image = workers.circles->result();
+    state.transfm.features = workers.circles->count();
+    ui.statusBar()->showMessage(QObject::tr("%1 circles detected").arg(state.transfm.features));
+    ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
+}
+
+void mm::controller::updateHistogram() {
+    state.histogram = workers.circles->histogram();
+    ui.images->setTabPixmap(ImageTabs::histogramtab, QPixmap::fromImage(state.histogram));
+}

@@ -11,6 +11,7 @@ mm::CircleWorker::CircleWorker(int r0,
                                QVector<std::pair<int,int>> e,
                                QImage io,
                                QColor mrk,
+                               bool bhist,
                                mode m)
     : rmin(r0),
       rmax(r1),
@@ -19,6 +20,8 @@ mm::CircleWorker::CircleWorker(int r0,
       edges(e),
       out(io),
       marker(mrk),
+      hist(bhist),
+      histacc(),
       circles(0),
       plotmode(m)
       {}
@@ -31,6 +34,10 @@ void mm::CircleWorker::work() {
     QPainter painter(&out);
     
     painter.setPen(marker);
+    
+    if (hist) {
+        histacc.resize(out.height() * out.width());
+    }
     
     for (int i = rmin; i < rmax; ++i) {
         switch (plotmode) {
@@ -60,8 +67,22 @@ void mm::CircleWorker::work() {
                 int x = j % out.width();
                 painter.drawEllipse(x - i, y - i, 2 * i, 2 * i);
             }
+            if (hist) {
+                histacc[j] += accumulator[j];
+            }
         }
         accumulator.fill(0);
+    }
+    
+    if (hist) {
+        histimg = QImage(out.size(), QImage::Format_RGB32);
+        int max = *std::max_element(histacc.begin(), histacc.end());
+        for (int i = 0; i < histacc.size(); ++i) {
+            int intensity = (histacc[i] / static_cast<float>(max)) * 255;
+            int y = i / histimg.width();
+            int x = i % histimg.width();
+            histimg.setPixel(x, y, qRgb(intensity, intensity, intensity));
+        }
     }
     
     emit finished();
@@ -69,3 +90,4 @@ void mm::CircleWorker::work() {
 
 int mm::CircleWorker::count() const { return circles; }
 QImage mm::CircleWorker::result() const { return out; }
+QImage mm::CircleWorker::histogram() const { return histimg; }

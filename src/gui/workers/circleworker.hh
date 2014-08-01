@@ -20,9 +20,11 @@ namespace mm {
                      QVector<std::pair<int,int>>,
                      QImage,
                      QColor,
+                     bool = false,
                      mode = trigonometric);
         int count() const;
         QImage result() const;
+        QImage histogram() const;
     public slots:
         void work();
     signals:
@@ -36,6 +38,9 @@ namespace mm {
         QVector<std::pair<int,int>> edges;
         QImage out;
         QColor marker;
+        bool hist;
+        QVector<int> histacc;
+        QImage histimg;
         int circles;
         mode plotmode;
     };
