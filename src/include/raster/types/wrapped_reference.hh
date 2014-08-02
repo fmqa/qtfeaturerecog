@@ -1,6 +1,10 @@
 #ifndef RASTER_TYPES_WRAPPED_REFERENCE_HH
 #define RASTER_TYPES_WRAPPED_REFERENCE_HH
 
+/**
+ * Provides an implementation of the Matrix concept for object references wrapped by a reference_wrapper.
+ */
+
 #include <functional>
 
 namespace raster {

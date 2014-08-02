@@ -1,10 +1,23 @@
 #ifndef RASTER_FILTER_HYST_HH
 #define RASTER_FILTER_HYST_HH
 
+/**
+ * Hysteresis pass of the canny filter.
+ */
+
 #include <limits>
 #include "../types.hh"
 
 namespace raster {
+    /**
+     * Mark a contour pixel and process the immediate neigbors.
+     * 
+     * @param m The input image
+     * @param g The output image
+     * @param i Row index of the current pixel
+     * @param j Column index of the current pixel
+     * @param tmin Minimum threshold for a pixel to be considered
+     */
     template <typename M, typename G, typename T, typename U>
     void hyst_mark_edge(M &&m, G &&g, T i, T j, U tmin) {
         T y0 = i ? i - 1 : i;
@@ -25,6 +38,14 @@ namespace raster {
         }
     }
     
+    /**
+     * Apply the hysteresis algorithm on a given matrix.
+     * 
+     * @param m The input matrix
+     * @param g The output matrix
+     * @param tmin The minimum threshold for an edge pixel
+     * @param tmax The maximum threshold for an edge pixel
+     */
     template <typename M, typename G, typename T>
     void hyst(M &&m, G &&g, T tmin, T tmax) {
         for (decltype(rows(m)) i = 0; i < rows(m); ++i) {

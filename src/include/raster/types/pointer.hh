@@ -1,6 +1,10 @@
 #ifndef RASTER_TYPES_POINTER_HH
 #define RASTER_TYPES_POINTER_HH
 
+/**
+ * Provides an implementation of the Matrix concept for objects referred to by a pointer.
+ */
+
 namespace raster {
     template <typename T>
     auto rows(const T *ptr) -> decltype(rows(*ptr)) {

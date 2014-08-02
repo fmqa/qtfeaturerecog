@@ -1,10 +1,23 @@
 #ifndef RASTER_FACADE_HH
 #define RASTER_FACADE_HH
 
+/**
+ * Facade helper class for implementing matrix decorators.
+ */
+
 #include <utility>
 #include "../types.hh"
 
 namespace raster {
+    /**
+     * A CRTP facade for implementing wrapper matrices.
+     * 
+     * This CRTP facade calls Derived::read(y,x) and Derived::write(y,x) on every read/write
+     * operation.
+     * 
+     * @tparam M the matrix to be wrapped
+     * @tparam Derived the deriving class type
+     */
     template <typename M, typename Derived>
     class facade {
         M m_mat;

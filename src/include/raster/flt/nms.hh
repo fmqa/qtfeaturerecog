@@ -1,12 +1,28 @@
 #ifndef RASTER_FILTER_NMS_HH
 #define RASTER_FILTER_NMS_HH
 
+/**
+ * Non-Maximum-Suppression (NMS) filter implementation and helper classes.
+ */
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "sobel.hh"
 
 namespace raster {
     namespace fn {
+        /**
+         * Return the non-maximum-suppressed (NMS) intensity of the cell (y,x) within
+         * the matrix f. 
+         * 
+         * h is used as the magnitude computation function.
+         * 
+         * @param f The input matrix
+         * @param h The magnitude function
+         * @param y The cell's row index
+         * @param x The cell's column index
+         * @return The NMS intensity of f(y,x)
+         */
         template <typename F, typename H, typename T>
         magnitude<H,F> nms(F &&f, H &&h, T y, T x) {
             auto gyx = sobel(f, y, x);
@@ -29,6 +45,9 @@ namespace raster {
         }
     }
     
+    /**
+     * A matrix representing the result of the application of an NMS filter.
+     */
     template <typename F, typename H>
     class nms {
         F fn;
@@ -53,6 +72,14 @@ namespace raster {
         }
     };
     
+    /**
+     * Returns a matrix representing the result of applying an NMS filter to f.
+     * h is used as the magnitude computation function.
+     *
+     * @param f The input matrix
+     * @param h The magnitude function
+     * @return The NMS matrix of f
+     */
     template <typename F, typename H>
     nms<F,H> nmsed(F &&f, H &&h) {
         return nms<F,H>(std::forward<F>(f), std::forward<H>(h));

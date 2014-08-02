@@ -1,6 +1,10 @@
 #ifndef RASTER_TYPES_SHARED_PTR_HH
 #define RASTER_TYPES_SHARED_PTR_HH
 
+/**
+ * Provides an implementation of the Matrix concept for objects managed by C++11 shared_ptrs.
+ */
+
 #include <memory>
 
 namespace raster {
