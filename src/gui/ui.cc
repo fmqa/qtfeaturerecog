@@ -8,6 +8,12 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDropEvent>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QImage>
+#include <QList>
+#include <QUrl>
 #include "partials/edgeoptions.hh"
 #include "partials/circleoptions.hh"
 #include "partials/ellipseoptions.hh"
@@ -129,6 +135,7 @@ mm::Ui::Ui() {
     uiInitOptions(this);
     uiInitControls(this);
     setCentralWidget(uiCreateMainPanel(this));
+    setAcceptDrops(true);
 }
 
 QString mm::Ui::requestImage() {
@@ -183,4 +190,25 @@ void mm::Ui::alertEmptySourceImage() {
                     0, this);
     msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
     msg.exec();
+}
+
+void mm::Ui::dragEnterEvent(QDragEnterEvent *event) {
+    event->accept();
+}
+
+void mm::Ui::dropEvent(QDropEvent *event) {
+    const QMimeData *mimeData = event->mimeData();
+    
+    if (mimeData->hasUrls()) {
+        QList<QUrl> urlList = mimeData->urls();
+        
+        if (urlList.size() == 1) {
+            emit fileDropped(urlList.first().toLocalFile());
+        }
+    } else if (mimeData->hasImage()) {
+        QImage image = qvariant_cast<QImage>(mimeData->imageData());
+        if (!image.isNull()) {
+            emit imageDropped(image);
+        }
+    }
 }

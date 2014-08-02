@@ -9,6 +9,10 @@ class QAction;
 class QTabWidget;
 class QPushButton;
 class QLabel;
+class QDropEvent;
+class QString;
+class QImage;
+class QDragEnterEvent;
 
 namespace mm {
     class EdgeOptions;
@@ -33,6 +37,9 @@ namespace mm {
     public slots:
         void enableControls();
         void disableControls();
+    signals:
+        void fileDropped(const QString &);
+        void imageDropped(const QImage &);
     public:
         uimenus menus;
         uitoolbars toolbars;
@@ -41,6 +48,9 @@ namespace mm {
         uicontrols controls;
         ImageTabs *images;
         QTabWidget *transfmtabs;
+    protected:
+        void dragEnterEvent(QDragEnterEvent *) override;
+        void dropEvent(QDropEvent *) override;
     };
 }
 

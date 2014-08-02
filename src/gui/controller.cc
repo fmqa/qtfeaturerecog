@@ -21,6 +21,20 @@ static bool load(const QString &img, mm::controller::imagedata &idata) {
     return true;
 }
 
+static void reset(mm::Ui &ui, mm::controller::statedata &state) {
+    ui.images->setTabPixmap(mm::ImageTabs::srctab, QPixmap::fromImage(state.source.image));
+    ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap());
+    ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap());
+    ui.images->setTabPixmap(mm::ImageTabs::histogramtab, QPixmap());
+    state.edges.image = QImage();
+    state.edges.list = QVector<std::pair<int,int>>();
+    state.edges.bitmap = std::vector<bool>();
+    state.transfm.image = QImage();
+    state.transfm.features = 0;
+    state.histogram = QImage();
+    ui.images->switchTab(mm::ImageTabs::srctab);
+}
+
 mm::controller::controller() : QObject(), ui(), state(), thread(), timer() {
     bind();
     ui.show();
@@ -38,6 +52,8 @@ void mm::controller::bind() {
     connect(ui.controls.detectedges, SIGNAL(clicked()), this, SLOT(detectedges()));
     connect(ui.controls.applytransfm, SIGNAL(clicked()), this, SLOT(applytransfm()));
     connect(ui.controls.stop, SIGNAL(clicked()), this, SLOT(stop()));
+    connect(&ui, SIGNAL(fileDropped(const QString &)), this, SLOT(loadDroppedFile(const QString &)));
+    connect(&ui, SIGNAL(imageDropped(const QImage &)), this, SLOT(loadDroppedImage(const QImage &)));
 }
 
 void mm::controller::open() {
@@ -52,17 +68,7 @@ void mm::controller::open() {
         return;
     }
     
-    ui.images->setTabPixmap(ImageTabs::srctab, QPixmap::fromImage(state.source.image));
-    ui.images->setTabPixmap(ImageTabs::edgetab, QPixmap());
-    ui.images->setTabPixmap(ImageTabs::transformtab, QPixmap());
-    ui.images->setTabPixmap(ImageTabs::histogramtab, QPixmap());
-    state.edges.image = QImage();
-    state.edges.list = QVector<std::pair<int,int>>();
-    state.edges.bitmap = std::vector<bool>();
-    state.transfm.image = QImage();
-    state.transfm.features = 0;
-    state.histogram = QImage();
-    ui.images->switchTab(ImageTabs::srctab);
+    reset(ui, state);
 }
 
 void mm::controller::save() {
@@ -222,3 +228,18 @@ void mm::controller::updateHistogram() {
     state.histogram = workers.circles->histogram();
     ui.images->setTabPixmap(ImageTabs::histogramtab, QPixmap::fromImage(state.histogram));
 }
+
+void mm::controller::loadDroppedFile(const QString &file) {
+    if (!load(file, state.source)) {
+        ui.alertInvalidSourceImage(file);
+        return;
+    }
+    
+    reset(ui, state);
+}
+
+void mm::controller::loadDroppedImage(const QImage &image) {
+    state.source.image = image;
+    reset(ui, state);
+}
+

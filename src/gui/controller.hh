@@ -72,6 +72,8 @@ namespace mm {
         void clearAndSwitchToTransfmTab();
         void displayEdgeResults();
         void updateHistogram();
+        void loadDroppedFile(const QString &);
+        void loadDroppedImage(const QImage &);
     private:
         Ui ui;
         statedata state;
