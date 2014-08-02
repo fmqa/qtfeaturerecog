@@ -136,3 +136,12 @@ void mm::ImageTabs::currentTabImageToClipboard() {
     }
 }
 
+QLabel& mm::ImageTabs::widget(mm::ImageTabs::tab t) {
+    switch (t) {
+        case srctab: return *labelSrc; break;
+        case edgetab: return *labelEdges; break;
+        case transformtab: return *labelTransform; break;
+        case histogramtab: return *labelHistogram; break;
+        default: return *labelSrc;
+    }
+}

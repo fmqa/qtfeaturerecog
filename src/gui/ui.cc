@@ -14,6 +14,7 @@
 #include <QImage>
 #include <QList>
 #include <QUrl>
+#include <QStatusBar>
 #include "partials/edgeoptions.hh"
 #include "partials/circleoptions.hh"
 #include "partials/ellipseoptions.hh"
@@ -136,6 +137,7 @@ mm::Ui::Ui() {
     uiInitControls(this);
     setCentralWidget(uiCreateMainPanel(this));
     setAcceptDrops(true);
+    statusBar()->addPermanentWidget(coordLabel = new QLabel);
 }
 
 QString mm::Ui::requestImage() {

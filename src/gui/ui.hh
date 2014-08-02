@@ -48,6 +48,7 @@ namespace mm {
         uicontrols controls;
         ImageTabs *images;
         QTabWidget *transfmtabs;
+        QLabel *coordLabel;
     protected:
         void dragEnterEvent(QDragEnterEvent *) override;
         void dropEvent(QDropEvent *) override;

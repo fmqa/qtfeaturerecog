@@ -4,6 +4,8 @@
 #include <QStringList>
 #include <QFileDialog>
 #include <QStatusBar>
+#include <QMouseEvent>
+#include <QLabel>
 #include <QDebug>
 #include "partials/imagetabs.hh"
 #include "controller.hh"
@@ -32,6 +34,7 @@ static void reset(mm::Ui &ui, mm::controller::statedata &state) {
     state.transfm.image = QImage();
     state.transfm.features = 0;
     state.histogram = QImage();
+    state.histacc = QVector<int>();
     ui.images->switchTab(mm::ImageTabs::srctab);
 }
 
@@ -54,6 +57,8 @@ void mm::controller::bind() {
     connect(ui.controls.stop, SIGNAL(clicked()), this, SLOT(stop()));
     connect(&ui, SIGNAL(fileDropped(const QString &)), this, SLOT(loadDroppedFile(const QString &)));
     connect(&ui, SIGNAL(imageDropped(const QImage &)), this, SLOT(loadDroppedImage(const QImage &)));
+    ui.images->widget(ImageTabs::histogramtab).setMouseTracking(true);
+    ui.images->widget(ImageTabs::histogramtab).installEventFilter(this);
 }
 
 void mm::controller::open() {
@@ -187,6 +192,7 @@ void mm::controller::displayEdgeResults() {
     state.edges.image = workers.edges->result();
     state.edges.list = workers.edges->list();
     state.edges.bitmap = workers.edges->bitmap();
+    ui.statusBar()->clearMessage();
     ui.statusBar()->showMessage(tr("%1 edges detected").arg(state.edges.list.size()));
     ui.images->setTabPixmap(ImageTabs::edgetab, QPixmap::fromImage(state.edges.image));
     ui.images->switchTab(ImageTabs::edgetab);
@@ -213,20 +219,23 @@ void mm::controller::stop() {
 void mm::controller::updateEdgeProgress() {
     if (thread->isRunning()) {
         ui.images->setTabPixmap(mm::ImageTabs::edgetab, QPixmap::fromImage(workers.edges->result()));
-        ui.statusBar()->showMessage(QObject::tr("%1 edges detected").arg(workers.edges->count()));
+        ui.statusBar()->clearMessage();
+        ui.statusBar()->showMessage(tr("%1 edges detected").arg(workers.edges->count()));
     }
 }
 
 void mm::controller::updateCircleProgress() {
     state.transfm.image = workers.circles->result();
     state.transfm.features = workers.circles->count();
-    ui.statusBar()->showMessage(QObject::tr("%1 circles detected").arg(state.transfm.features));
+    ui.statusBar()->clearMessage();
+    ui.statusBar()->showMessage(tr("%1 circles detected").arg(state.transfm.features));
     ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
 }
 
 void mm::controller::updateHistogram() {
     state.histogram = workers.circles->histogram();
     ui.images->setTabPixmap(ImageTabs::histogramtab, QPixmap::fromImage(state.histogram));
+    state.histacc = workers.circles->histAcc();
 }
 
 void mm::controller::loadDroppedFile(const QString &file) {
@@ -243,3 +252,16 @@ void mm::controller::loadDroppedImage(const QImage &image) {
     reset(ui, state);
 }
 
+bool mm::controller::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::MouseMove && !state.histacc.empty()) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        int offset = mouseEvent->y() * state.histogram.width() + mouseEvent->x();
+        if (offset < state.histacc.size()) {
+            ui.coordLabel->setText(tr("(x: %1, y: %2) = Cumulative Score: %3)")
+                .arg(mouseEvent->x()).arg(mouseEvent->y()).arg(state.histacc[offset]));
+        }
+    } else if (event->type() == QEvent::Leave) {
+        ui.coordLabel->setText("");
+    }
+    return QObject::eventFilter(obj, event);
+}

@@ -91,3 +91,4 @@ void mm::CircleWorker::work() {
 int mm::CircleWorker::count() const { return circles; }
 QImage mm::CircleWorker::result() const { return out; }
 QImage mm::CircleWorker::histogram() const { return histimg; }
+QVector<int> mm::CircleWorker::histAcc() const { return histacc; }

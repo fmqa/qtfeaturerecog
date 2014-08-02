@@ -25,6 +25,7 @@ namespace mm {
         int count() const;
         QImage result() const;
         QImage histogram() const;
+        QVector<int> histAcc() const;
     public slots:
         void work();
     signals:

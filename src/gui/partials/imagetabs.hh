@@ -20,6 +20,7 @@ namespace mm {
         void setTabPixmap(tab, QPixmap const &);
         void saveCurrentTabImage();
         void currentTabImageToClipboard();
+        QLabel& widget(tab);
     private:
         QTabWidget *tabWidget;
         QScrollArea *scrollAreaSrc, *scrollAreaEdges, *scrollAreaTransform,

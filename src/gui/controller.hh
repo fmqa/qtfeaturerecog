@@ -9,8 +9,10 @@
 #include <QObject>
 #include <QImage>
 #include <QString>
+#include <QVector>
 #include <QThread>
 #include <QTimer>
+#include <QEvent>
 
 #include "ui.hh"
 
@@ -42,6 +44,7 @@ namespace mm {
             edgedata edges;
             transfmdata transfm;
             QImage histogram;
+            QVector<int> histacc;
         };
         
         struct workerdata {
@@ -74,6 +77,8 @@ namespace mm {
         void updateHistogram();
         void loadDroppedFile(const QString &);
         void loadDroppedImage(const QImage &);
+    protected:
+        bool eventFilter(QObject *, QEvent *) override;
     private:
         Ui ui;
         statedata state;
