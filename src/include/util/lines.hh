@@ -1,7 +1,22 @@
 #ifndef LINES_HH
 #define LINES_HH
 
+/**
+ * Algorithms for lines and linear functions.
+ */
+
 namespace lines {
+    /**
+     * Finds the tangent passing through the point (x,y) within an image.
+     * 
+     * @param x The x-coordinate of the tangent point
+     * @param y The y-coordinate of the tangent point
+     * @param m Output parameter where the slope of the tangent will be stored
+     * @param b Output parameter where the y-axis offset of the tangent will be stored
+     * @param f The monochrome image predicate containing the image points
+     * @param off The block size to be used for the linear regression
+     * @return true if a tangent passes through the given point, false otherwise
+     */
     template <typename T, typename U, typename V, typename F>
     bool tangent(T x, T y, U &m, V &b, F &&f, int off = 2) {
         if (!f(x, y)) {
@@ -32,6 +47,20 @@ namespace lines {
         return false;
     }
     
+    /**
+     * Finds the intersection point of the 2 tangents passing through the given point within
+     * an image.
+     * 
+     * @param x0 The x-coordinate of the first tangent point
+     * @param y0 The y-coordinate of the first tangent point
+     * @param x1 The x-coordinate of the first tangent point
+     * @param y1 The y-coordinate of the first tangent point
+     * @param xt Output parameter where the x-coordinate of the intersection point will be stored
+     * @param yt Output parameter where the y-coordinate of the intersection point will be stored
+     * @param f The monochrome image predicate containing the image points
+     * @param off The block size to be used for the linear regression
+     * @return true if an intersection point exists, false otherwise
+     */
     template <typename T, typename U, typename V, typename F>
     bool tangent_intersection(T x0, T y0, U x1, U y1, V &xt, V &yt, F &&f, int off = 2) {
         double m0, b0, m1, b1;
@@ -61,6 +90,21 @@ namespace lines {
         return false;
     }
     
+    /**
+     * Finds the intersection point of 2 given lines.
+     * 
+     * @param x0 The x-coordinate of the first line's origin point
+     * @param y0 The y-coordinate of the first line's origin point
+     * @param x1 The x-coordinate of the first line's destination point
+     * @param y1 The y-coordinate of the first line's destination point
+     * @param x2 The x-coordinate of the second line's origin point
+     * @param y2 The y-coordinate of the second line's origin point
+     * @param x3 The x-coordinate of the second line's destination point
+     * @param y4 The y-coordinate of the second line's destination point
+     * @param xi Output parameter where the x-coordinate of the intersection point will be stored
+     * @param yi Output parameter where the y-coordinate of the intersection point will be stored
+     * @return true if the given lines intersect, false otherwise
+     */
     template <typename T, typename U, typename V, typename W, typename X>
     bool intersect(T x0, T y0, 
                    U x1, U y1, 

@@ -1,12 +1,32 @@
 #ifndef ELLIPSES_HH 
 #define ELLIPSES_HH
 
+/**
+ * Plotting and Hough transformation algorithms for circles.
+ */
+
 #include <utility>
 #include <iterator>
 #include <cmath>
 #include "lines.hh"
 
 namespace ellipses {
+    /**
+     * Generate an ellipse using trigonometric functions.
+     * 
+     * This function outputs the (x,y) pairs denoting an ellipses's edges
+     * to the given output iterator.
+     * 
+     * @param a Semi-major axis of the ellipse to generate
+     * @param b Semi-minor axis of the ellipse to generate
+     * @param firstangle Iterator pointing to the angle of the ellipse to begin from
+     * @param lastangle Iterator pointing to the last angle of the ellipse
+     * @param out Output iterator where the (x,y)-pairs denoting the edges will be written to
+     * @param x0 The x-coordinate of the center point of the ellipse to be generated
+     * @param y0 The y-coordinate of the center point of the ellipse to be generated
+     * @param alpha The rotation angle of the ellipse to be generated
+     * @return The output iterator out
+     */
     template <typename T,
               typename InputIterator,
               typename OutputIterator,
@@ -30,12 +50,36 @@ namespace ellipses {
         return out;
     }
     
+    /**
+     * Trigonometric ellipse generator (Functor).
+     * 
+     * @tparam ForwardIterator The type of the angle iterator
+     */
     template <typename ForwardIterator>
     class trigonometric {
         ForwardIterator begin, end;
     public:
+        /**
+         * Creates a trigonometric ellipse generator, generating ellipses
+         * which begin from the angle first and end at the angle last.
+         * 
+         * @param first Iterator to the ellipse angle to begin from
+         * @param last Iterator the ellipse angle to stop at
+         */
         trigonometric(ForwardIterator first, ForwardIterator last) : begin(first),
                                                                      end(last) {}
+                                                                     
+       /**
+        * Generates an ellipse with the given axis lengths, center point, and rotation angle
+        * 
+        * @param a Semi-major axis of the ellipse to generate
+        * @param b Semi-minor axis of the ellipse to generate
+        * @param out Output iterator where the (x,y)-pairs denoting the edges will be written to
+        * @param x0 The x-coordinate of the center point of the ellipse to be generated
+        * @param y0 The y-coordinate of the center point of the ellipse to be generated
+        * @param alpha The rotation angle of the ellipse to be generated
+        * @return The output iterator out
+        */
         template <typename T, 
                   typename OutputIterator,
                   typename U = int,
@@ -51,11 +95,36 @@ namespace ellipses {
         }
     };
     
+    /**
+     * Factory function for trigonometric ellipse functors.
+     * 
+     * @param begin Iterator to the ellipse angle to begin from
+     * @param end Iterator the ellipse angle to stop at
+     * @return A trigonometric ellipse generator functor
+     */
     template <typename ForwardIterator>
     trigonometric<ForwardIterator> trig(ForwardIterator firstangle, ForwardIterator lastangle) {
         return trigonometric<ForwardIterator>(firstangle, lastangle);
     }
     
+    /**
+     * Finds the parameters of the candidate ellipse passing though 3 points.
+     * 
+     * @param x0 x-coordinate of the first point
+     * @param y0 y-coordinate of the first point
+     * @param x1 x-coordinate of the second point
+     * @param y1 y-coordinate of the second point
+     * @param x2 x-coordinate of the third point
+     * @param y2 y-coordinate of the third point
+     * @param f Point predicate of the image with the ellipse points (Bitmap)
+     * @param xc Output parameter where the x-coordinate of the candidate ellipse's center will be stored
+     * @param yc Output parameter where the y-coordinate of the candidate ellipse's center will be stored
+     * @param a Output parameter where the semi-major axis length of the candidate ellipse will be stored
+     * @param b Output parameter where the semi-minor axis length of the candidate ellipse will be stored
+     * @param alpha Output parameter where the rotation angle of the candidate ellipse will be stored
+     * @param off The interpolation offset for the linear regression used to determine tangents
+     * @return true if an ellipse passes through through the given point, false otherwise
+     */
     template <typename T, typename U, typename V, typename F, typename W, typename X, typename Y>
     bool parametrize(T x0, T y0,
                      U x1, U y1,
@@ -137,6 +206,21 @@ namespace ellipses {
         return true;
     }
     
+    /**
+     * Returns the score of the given ellipse within an image.
+     * 
+     * The score is defined as the number of ellipse points that exist in an image.
+     * 
+     * @param x0 The x-coordinate of the center point of the ellipse to test
+     * @param y0 The y-coordinate of the center point of the ellipse to test
+     * @param smaj The semi-major axis length of the ellipse to test
+     * @param smin The semi-minor axis length of the ellipse to test
+     * @param alpha The rotation angle of the ellipse to test
+     * @param e The ellipse plotter to be used
+     * @param f The monochrome image predicate containing the image points
+     * @param off The interpolation offset of the score check
+     * @return The number of ellipse points that exist within the given image
+     */
     template <typename T, typename U, typename V, typename Ellipse, typename F>
     int score(T x0, T y0, U smaj, U smin, V alpha, Ellipse &&e, F &&f, int off = 1) {
         class iterator {
