@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <numeric>
+#include <QApplication>
+#include <QClipboard>
 #include <QAction>
 #include <QPushButton>
 #include <QString>
@@ -19,6 +21,25 @@
 #include "partials/circleoptions.hh"
 #include "partials/ellipseoptions.hh"
 #include "../util/ellipsehough.hh"
+
+static QImage circleAreaImage(const QImage &in, const QVector<circles::parametric_circle<int>> &pc) {
+    QImage out(in.size(), QImage::Format_ARGB32);
+    out.fill(Qt::transparent);
+    for (const auto &c : pc) {
+        int bx = c.x - c.radius;
+        int by = c.y - c.radius;
+        int ex = c.x + c.radius;
+        int ey = c.y + c.radius;
+        for (int y = by; y < ey; ++y) {
+            for (int x = bx; x < ex; ++x) {
+                if (y >= 0 && x >= 0 && y < out.height() && x < out.width() && circles::within(x, y, c)) {
+                    out.setPixel(x, y, in.pixel(x, y));
+                }
+            }
+        }
+    }
+    return out;
+}
 
 static bool load(const QString &img, mm::controller::imagedata &idata) {
     if (!idata.image.load(img)) {
@@ -40,6 +61,7 @@ static void reset(mm::Ui &ui, mm::controller::statedata &state) {
     state.transfm.features = 0;
     state.histogram = QImage();
     state.histacc = QVector<int>();
+    state.circles = QVector<circles::parametric_circle<int>>();
     ui.images->switchTab(mm::ImageTabs::srctab);
 }
 
@@ -51,7 +73,9 @@ mm::controller::controller() : QObject(), ui(), state(), thread(), timer() {
 void mm::controller::bind() {
     connect(ui.actions.open, SIGNAL(triggered()), this, SLOT(open()));
     connect(ui.actions.save, SIGNAL(triggered()), this, SLOT(save()));
+    connect(ui.actions.savecirc, SIGNAL(triggered()), this, SLOT(savecirc()));
     connect(ui.actions.copy, SIGNAL(triggered()), this, SLOT(copy()));
+    connect(ui.actions.copycirc, SIGNAL(triggered()), this, SLOT(copycirc()));
     connect(ui.actions.exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui.actions.viewsrc, SIGNAL(triggered()), this, SLOT(viewsrc()));
     connect(ui.actions.viewedges, SIGNAL(triggered()), this, SLOT(viewedges()));
@@ -87,6 +111,32 @@ void mm::controller::save() {
 
 void mm::controller::copy() {
     ui.images->currentTabImageToClipboard();
+}
+
+void mm::controller::savecirc() {
+    if (state.circles.empty()) {
+        ui.alertNoParametricCircles();
+        return;
+    }
+    
+    QString file = ui.requestSaveImage();
+    
+    if (file.isEmpty()) {
+        return;
+    }
+    
+    if (!circleAreaImage(state.source.image, state.circles).save(file)) {
+        ui.alertSaveError(file);
+    }
+}
+
+void mm::controller::copycirc() {
+    if (state.circles.empty()) {
+        ui.alertNoParametricCircles();
+        return;
+    }
+    
+    QApplication::clipboard()->setPixmap(QPixmap::fromImage(circleAreaImage(state.source.image, state.circles)));
 }
 
 void mm::controller::close() {
@@ -169,6 +219,7 @@ void mm::controller::applycircletransfm() {
     connect(workers.circles, SIGNAL(started()), this, SLOT(clearAndSwitchToTransfmTab()));
     connect(workers.circles, SIGNAL(finished()), &ui, SLOT(enableControls()));
     connect(workers.circles, SIGNAL(finished()), this, SLOT(updateCircleProgress()));
+    connect(workers.circles, SIGNAL(finished()), this, SLOT(circlesDone()));
     if (ui.options.circles->histogram()) {
         connect(workers.circles, SIGNAL(finished()), this, SLOT(updateHistogram()));
     }
@@ -286,6 +337,10 @@ void mm::controller::updateCircleProgress() {
     ui.statusBar()->clearMessage();
     ui.statusBar()->showMessage(tr("%1 circles detected").arg(state.transfm.features));
     ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
+}
+
+void mm::controller::circlesDone() {
+    state.circles = workers.circles->circles();
 }
 
 void mm::controller::updateEllipseProgress() {

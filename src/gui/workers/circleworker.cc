@@ -22,8 +22,9 @@ mm::CircleWorker::CircleWorker(int r0,
       marker(mrk),
       hist(bhist),
       histacc(),
-      circles(0),
-      plotmode(m)
+      num(0),
+      plotmode(m),
+      circp()
       {}
       
 void mm::CircleWorker::work() {
@@ -62,9 +63,10 @@ void mm::CircleWorker::work() {
         }
         for (int j = 0; j < accumulator.size(); ++j) {
             if (accumulator[j] >= smin && accumulator[j] <= smax) {
-                ++circles;
+                ++num;
                 int y = j / out.width();
                 int x = j % out.width();
+                circp.push_back(circles::parametric_circle<int>{x, y, i});
                 painter.drawEllipse(x - i, y - i, 2 * i, 2 * i);
             }
             if (hist) {
@@ -88,7 +90,8 @@ void mm::CircleWorker::work() {
     emit finished();
 }
 
-int mm::CircleWorker::count() const { return circles; }
+int mm::CircleWorker::count() const { return num; }
 QImage mm::CircleWorker::result() const { return out; }
 QImage mm::CircleWorker::histogram() const { return histimg; }
 QVector<int> mm::CircleWorker::histAcc() const { return histacc; }
+QVector<circles::parametric_circle<int>> mm::CircleWorker::circles() const { return circp; }

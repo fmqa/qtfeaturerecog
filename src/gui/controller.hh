@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QEvent>
+#include <util/circles.hh>
 
 #include "ui.hh"
 
@@ -47,6 +48,7 @@ namespace mm {
             transfmdata transfm;
             QImage histogram;
             QVector<int> histacc;
+            QVector<circles::parametric_circle<int>> circles;
         };
         
         struct workerdata {
@@ -64,7 +66,9 @@ namespace mm {
     private slots:
         void open();
         void save();
+        void savecirc();
         void copy();
+        void copycirc();
         void close();
         void viewsrc();
         void viewedges();
@@ -75,6 +79,7 @@ namespace mm {
         void stop();
         void updateEdgeProgress();
         void updateCircleProgress();
+        void circlesDone();
         void updateEllipseProgress();
         void clearAndSwitchToImageTab();
         void clearAndSwitchToTransfmTab();

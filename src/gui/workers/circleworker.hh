@@ -6,6 +6,7 @@
 #include <QImage>
 #include <QVector>
 #include <QColor>
+#include "../../include/util/circles.hh"
 
 namespace mm {
     class CircleWorker : public QObject {
@@ -26,6 +27,7 @@ namespace mm {
         QImage result() const;
         QImage histogram() const;
         QVector<int> histAcc() const;
+        QVector<circles::parametric_circle<int>> circles() const;
     public slots:
         void work();
     signals:
@@ -42,8 +44,9 @@ namespace mm {
         bool hist;
         QVector<int> histacc;
         QImage histimg;
-        int circles;
+        int num;
         mode plotmode;
+        QVector<circles::parametric_circle<int>> circp;
     };
 }
 

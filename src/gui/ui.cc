@@ -30,9 +30,17 @@ static void uiInitActions(mm::Ui *ui) {
     ui->actions.save->setShortcuts(QKeySequence::Save);
     ui->actions.save->setStatusTip(QObject::tr("Save the active image"));
     
+    ui->actions.savecirc = new QAction(QIcon::fromTheme("document-save"), QObject::tr("&Save circle mask..."), ui);
+    ui->actions.savecirc->setShortcuts(QKeySequence::Save);
+    ui->actions.savecirc->setStatusTip(QObject::tr("Save the circle contents as an image"));
+    
     ui->actions.copy = new QAction(QIcon::fromTheme("edit-copy"), QObject::tr("&Copy..."), ui);
     ui->actions.copy->setShortcuts(QKeySequence::Copy);
     ui->actions.copy->setStatusTip(QObject::tr("Copy the active image to clipboard"));
+    
+    ui->actions.copycirc = new QAction(QIcon::fromTheme("edit-copy"), QObject::tr("&Copy circle mask..."), ui);
+    ui->actions.copycirc->setShortcuts(QKeySequence::Copy);
+    ui->actions.copycirc->setStatusTip(QObject::tr("Copy the circle contents to the clipboard"));
     
     ui->actions.exit = new QAction(QObject::tr("E&xit"), ui);
     ui->actions.exit->setShortcuts(QKeySequence::Quit);
@@ -56,9 +64,13 @@ static void uiInitMenus(mm::Ui *ui) {
     ui->menus.file = ui->menuBar()->addMenu(QObject::tr("&File"));
     ui->menus.file->addAction(ui->actions.open);
     ui->menus.file->addAction(ui->actions.save);
-    ui->menus.file->addAction(ui->actions.copy);
+    ui->menus.file->addAction(ui->actions.savecirc);
     ui->menus.file->addSeparator();
     ui->menus.file->addAction(ui->actions.exit);
+    
+    ui->menus.edit = ui->menuBar()->addMenu(QObject::tr("&Edit"));
+    ui->menus.edit->addAction(ui->actions.copy);
+    ui->menus.edit->addAction(ui->actions.copycirc);
     
     ui->menus.view = ui->menuBar()->addMenu(QObject::tr("&View"));
     ui->menus.view->addAction(ui->actions.viewsrc);
@@ -157,6 +169,22 @@ QString mm::Ui::requestImage() {
     return selection.first();
 }
 
+QString mm::Ui::requestSaveImage() {
+    QFileDialog dialog(this, tr("Save image..."), QString(), tr("Images (*.png *.jpg)"));
+    dialog.setDefaultSuffix(".png");
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    
+    if (dialog.exec()) {
+        QStringList selection = dialog.selectedFiles();
+        
+        if (!selection.empty()) {
+            return selection.first();
+        }
+    }
+    
+    return QString();
+}
+
 void mm::Ui::alertInvalidSourceImage(const QString &file) {
     QMessageBox msg(QMessageBox::Warning,
                     tr("HoughStudio error"),
@@ -194,6 +222,15 @@ void mm::Ui::alertEmptySourceImage() {
     msg.exec();
 }
 
+void mm::Ui::alertNoParametricCircles() {
+    QMessageBox msg(QMessageBox::Warning,
+                    tr("HoughStudio error"),
+                    tr("No circles in parameter buffer. Please run the detector first"),
+                    0, this);
+    msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
+    msg.exec();
+}
+
 void mm::Ui::dragEnterEvent(QDragEnterEvent *event) {
     event->accept();
 }
@@ -214,3 +251,13 @@ void mm::Ui::dropEvent(QDropEvent *event) {
         }
     }
 }
+
+void mm::Ui::alertSaveError(const QString &file) {
+    QMessageBox msg(QMessageBox::Warning,
+                    tr("HoughStudio error"),
+                    tr("Error saving file: %1").arg(file),
+                    0, this);
+    msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
+    msg.exec();
+}
+

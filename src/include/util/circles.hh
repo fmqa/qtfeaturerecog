@@ -8,6 +8,22 @@
 namespace circles {
     extern const std::array<double,360> unit;
     
+    template <typename T, typename U = T>
+    struct parametric_circle {
+        T x, y;
+        U radius;
+    };
+    
+    template <typename T, typename U, typename V, typename W, typename X>
+    bool within(T x, U y, V cx, W cy, X r) {
+        return ((x - cx) * (x - cx) + (y - cy) * (y - cy)) < (r * r);
+    }
+    
+    template <typename T, typename U, typename V, typename W>
+    bool within(T x, U y, const parametric_circle<V,W> &pc) {
+        return within(x, y, pc.x, pc.y, pc.radius);
+    }
+    
     template <typename T, 
               typename InputIterator, 
               typename OutputIterator, 

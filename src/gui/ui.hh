@@ -23,17 +23,20 @@ namespace mm {
     class Ui : public QMainWindow {
         Q_OBJECT
     private:
-        struct uimenus { QMenu *file, *view; };
+        struct uimenus { QMenu *file, *edit, *view; };
         struct uitoolbars { QToolBar *file; };
-        struct uiactions { QAction *open, *save, *copy, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr; };
+        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr; };
         struct uioptions { EdgeOptions *edges; CircleOptions *circles; EllipseOptions *ellipses; };
         struct uicontrols { QPushButton *detectedges, *applytransfm, *stop; };
     public:
         Ui();
         QString requestImage();
+        QString requestSaveImage();
         void alertInvalidSourceImage(const QString &);
         void alertExtractEdges();
         void alertEmptySourceImage();
+        void alertNoParametricCircles();
+        void alertSaveError(const QString &);
     public slots:
         void enableControls();
         void disableControls();
