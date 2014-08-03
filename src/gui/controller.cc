@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <numeric>
 #include <QAction>
 #include <QPushButton>
 #include <QString>
@@ -12,8 +14,11 @@
 #include <raster/util/view2d.hh>
 #include "workers/edgeworker.hh"
 #include "workers/circleworker.hh"
+#include "workers/ellipseworker.hh"
 #include "partials/edgeoptions.hh"
 #include "partials/circleoptions.hh"
+#include "partials/ellipseoptions.hh"
+#include "../util/ellipsehough.hh"
 
 static bool load(const QString &img, mm::controller::imagedata &idata) {
     if (!idata.image.load(img)) {
@@ -175,7 +180,58 @@ void mm::controller::applycircletransfm() {
     timer->start(100);
 }
 
-void mm::controller::applyellipsetransfm() {
+static QVector<std::pair<int,int>> randomsubset(const QVector<std::pair<int,int>> &v, float p) {
+    QVector<int> indices(v.size());
+    std::iota(indices.begin(), indices.end(), 0);
+    std::random_shuffle(indices.begin(), indices.end());
+    int m = p * indices.size();
+    QVector<std::pair<int,int>> result(m);
+    for (int i = 0; i < m; ++i) {
+        result[i] = v[indices[i]];
+    }
+    return result;    
+}
+
+static mm::ellipserange ellipserangeFrom(const mm::EllipseOptions &o) {
+    return mm::ellipserange{o.minMinor(), o.maxMinor(), 
+                            o.minMajor(), o.maxMajor(),
+                            o.minScore(), o.maxScore()};
+}
+
+void mm::controller::ellipsetransfm(const ellipserange &range, const QVector<std::pair<int,int>> &edges) {
+    stop();
+    
+    thread = new QThread(this);
+    timer = new QTimer(this);
+    
+    workers.ellipses = new EllipseWorker(range, edges, state.edges.bitmap, state.source.image, 
+                                         ui.options.ellipses->getColor());
+    
+    connect(thread, SIGNAL(started()), workers.ellipses, SLOT(work()));
+    connect(workers.ellipses, SIGNAL(started()), &ui, SLOT(disableControls()));
+    connect(workers.ellipses, SIGNAL(started()), this, SLOT(clearAndSwitchToTransfmTab()));
+    connect(workers.ellipses, SIGNAL(finished()), &ui, SLOT(enableControls()));
+    connect(workers.ellipses, SIGNAL(finished()), this, SLOT(updateEllipseProgress()));
+    connect(workers.ellipses, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateEllipseProgress()));
+    
+    workers.ellipses->moveToThread(thread);
+    thread->start();
+    timer->start(100);
+}
+
+void mm::controller::applyellipsetransfm() {    
+    if (state.edges.list.isEmpty()) {
+        ui.alertExtractEdges();
+        return;
+    }
+    
+    if (ui.options.ellipses->rhtPercentage() == 100 || !ui.options.ellipses->rhtEnabled()) {
+        ellipsetransfm(ellipserangeFrom(*ui.options.ellipses), state.edges.list);
+    } else {
+        ellipsetransfm(ellipserangeFrom(*ui.options.ellipses), 
+                       randomsubset(state.edges.list, ui.options.ellipses->rhtPercentage() / 100.0f));
+    }
 }
 
 void mm::controller::clearAndSwitchToImageTab() {
@@ -229,6 +285,14 @@ void mm::controller::updateCircleProgress() {
     state.transfm.features = workers.circles->count();
     ui.statusBar()->clearMessage();
     ui.statusBar()->showMessage(tr("%1 circles detected").arg(state.transfm.features));
+    ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
+}
+
+void mm::controller::updateEllipseProgress() {
+    state.transfm.image = workers.ellipses->result();
+    state.transfm.features = workers.ellipses->count();
+    ui.statusBar()->clearMessage();
+    ui.statusBar()->showMessage(tr("%1 ellipses detected").arg(state.transfm.features));
     ui.images->setTabPixmap(mm::ImageTabs::transformtab, QPixmap::fromImage(state.transfm.image));
 }
 

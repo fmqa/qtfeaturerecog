@@ -19,6 +19,8 @@
 namespace mm {
     class EdgeWorker;
     class CircleWorker;
+    class EllipseWorker;
+    class ellipserange;
     
     class controller : public QObject {
         Q_OBJECT
@@ -50,12 +52,14 @@ namespace mm {
         struct workerdata {
             EdgeWorker *edges;
             CircleWorker *circles;
+            EllipseWorker *ellipses;
         };
     public:
         explicit controller();
     private:
         void bind();
         void applycircletransfm();
+        void ellipsetransfm(const ellipserange &, const QVector<std::pair<int,int>> &);
         void applyellipsetransfm();
     private slots:
         void open();
@@ -71,6 +75,7 @@ namespace mm {
         void stop();
         void updateEdgeProgress();
         void updateCircleProgress();
+        void updateEllipseProgress();
         void clearAndSwitchToImageTab();
         void clearAndSwitchToTransfmTab();
         void displayEdgeResults();

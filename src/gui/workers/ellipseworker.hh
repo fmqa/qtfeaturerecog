@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QVector>
 #include <QImage>
+#include <QColor>
 #include "../../util/ellipsehough.hh"
 
 
@@ -16,10 +17,13 @@ namespace mm {
         EllipseWorker(const ellipserange &r,
                       QVector<std::pair<int,int>>,
                       std::vector<bool>,
-                      QImage);
+                      QImage,
+                      QColor);
+        
         int currentX() const;
         int currentY() const;
         int count() const;
+        QImage result() const;
     public slots:
         void work();
     signals:
@@ -30,6 +34,7 @@ namespace mm {
         QVector<std::pair<int,int>> lst;
         std::vector<bool> bits;
         QImage io;
+        QColor marker;
         int px;
         int py;
         int num;

@@ -3,9 +3,13 @@
 #include <QGroupBox>
 #include <QSpinBox>
 #include <QLabel>
+#include <QCheckBox>
+#include <QColorDialog>
+#include <QPainter>
+#include <QPushButton>
 #include "ellipseoptions.hh"
 
-mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent) {
+mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerImage(10, 5, QImage::Format_RGB32), markerColor(qRgb(255,0,0)) {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     
     QGroupBox *group = new QGroupBox(tr("Ellipses"));
@@ -40,16 +44,26 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent) {
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
-        /*
+        
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Max. score")));
-                hbox->addWidget(maxScoreSpinBox = new QSpinBox);
+                hbox->addWidget(new QLabel(tr("Marker color:")));
+                hbox->addWidget(colorLabel = new QLabel);
+                hbox->addWidget(colorPickBtn = new QPushButton("..."));
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
-        */
+        
+        {
+            QWidget *container = new QWidget;
+            QHBoxLayout *hbox = new QHBoxLayout;
+                hbox->addWidget(chkRHT = new QCheckBox(tr("RHT")));
+                hbox->addWidget(rhtEdgePercentage = new QSpinBox);
+                hbox->addWidget(new QLabel("%"));
+            container->setLayout(hbox);
+            vbox->addWidget(container);
+        }
     }
     group->setLayout(vbox);
     mainLayout->addWidget(group);
@@ -71,6 +85,10 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent) {
     minScoreSpinBox->setMaximum(99999999);
     maxScoreSpinBox->setMaximum(99999999);
     
+    rhtEdgePercentage->setMaximum(100);
+    rhtEdgePercentage->setMinimum(0);
+    rhtEdgePercentage->setEnabled(false);
+    
     connect(minMajorSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
     connect(maxMajorSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
     connect(minMinorSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
@@ -78,10 +96,19 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent) {
     
     connect(minScoreSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
     connect(maxScoreSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
+    
+    connect(chkRHT, SIGNAL(stateChanged(int)), this, SLOT(rhtStateChanged(int)));
+    connect(colorPickBtn, SIGNAL(clicked()), this, SLOT(pickColor()));
+    
+    setColor();
 }
 
 void mm::EllipseOptions::onValueChanged(int) {
     emit changed();
+}
+
+void mm::EllipseOptions::rhtStateChanged(int state) {
+    rhtEdgePercentage->setEnabled(state == Qt::Checked);
 }
 
 int mm::EllipseOptions::minMajor() const {
@@ -108,6 +135,18 @@ int mm::EllipseOptions::maxScore() const {
     return maxScoreSpinBox->value();
 }
 
+bool mm::EllipseOptions::rhtEnabled() const {
+    return chkRHT->isChecked();
+}
+
+int mm::EllipseOptions::rhtPercentage() const {
+    return rhtEdgePercentage->value();
+}
+
+QColor mm::EllipseOptions::getColor() const {
+    return markerColor;
+}
+
 mm::EllipseOptions& mm::EllipseOptions::setMinMajor(int value) {
     return minMajorSpinBox->setValue(value), *this;
 }
@@ -132,4 +171,15 @@ mm::EllipseOptions& mm::EllipseOptions::setMaxScore(int value) {
     return maxScoreSpinBox->setValue(value), *this;
 }
 
+void mm::EllipseOptions::pickColor() {
+    markerColor = QColorDialog::getColor(markerColor, this, tr("Pick marker color"));
+    setColor();
+}
 
+void mm::EllipseOptions::setColor() {
+    {
+        QPainter painter(&markerImage);
+        painter.fillRect(0, 0, 10, 5, markerColor);
+    }
+    colorLabel->setPixmap(QPixmap::fromImage(markerImage));
+}

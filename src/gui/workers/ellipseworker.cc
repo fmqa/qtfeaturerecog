@@ -8,11 +8,13 @@
 mm::EllipseWorker::EllipseWorker(const mm::ellipserange &r,
                                  QVector<std::pair<int,int>> edgelst,
                                  std::vector<bool> bv,
-                                 QImage img)
+                                 QImage img,
+                                 QColor m)
     : rng(r),
       lst(edgelst),
       bits(bv),
       io(img),
+      marker(m),
       px(),
       py(),
       num()
@@ -22,7 +24,7 @@ void mm::EllipseWorker::work() {
     emit started();
     
     QPainter painter(&io);
-    painter.setPen(qRgb(255,0,0));
+    painter.setPen(marker);
     
     auto edgemap = raster::as2d(io.height(), io.width(), bits);
     
@@ -81,3 +83,4 @@ void mm::EllipseWorker::work() {
 int mm::EllipseWorker::currentX() const { return px; }
 int mm::EllipseWorker::currentY() const { return py; }
 int mm::EllipseWorker::count() const { return num; }
+QImage mm::EllipseWorker::result() const { return io; }

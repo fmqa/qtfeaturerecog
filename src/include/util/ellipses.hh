@@ -64,7 +64,7 @@ namespace ellipses {
                      W &xc, W &yc,
                      X &a, X &b, 
                      Y &alpha,
-                     int off = 2)
+                     int off = 1)
     {
         if (!f(x0, y0) || !f(x1, y1) || !f(x2, y2)) {
             return false;
