@@ -4,6 +4,8 @@
 #include <QWidget>
 class QCheckBox;
 class QSpinBox;
+class QGroupBox;
+class QLabel;
 
 namespace mm {
     class EdgeOptions : public QWidget {
@@ -18,6 +20,7 @@ namespace mm {
         EdgeOptions& setBlurRadius(int);
         EdgeOptions& setMinThreshold(int);
         EdgeOptions& setMaxThreshold(int);
+        void retranslateUi();
     private slots:
         void onValueChanged(int);
         void onStateChanged(bool);
@@ -28,6 +31,8 @@ namespace mm {
         QSpinBox *gaussianBlurRadiusSpinBox;
         QSpinBox *cannyMinThresholdSpinBox;
         QSpinBox *cannyMaxThresholdSpinBox;
+        QGroupBox *extGroup, *blurGroup;
+        QLabel *lblRadius, *lblMinThreshold, *lblMaxThreshold;
     };
 }
 

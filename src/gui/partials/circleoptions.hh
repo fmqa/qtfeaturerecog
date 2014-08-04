@@ -8,6 +8,7 @@ class QSpinBox;
 class QLabel;
 class QPushButton;
 class QCheckBox;
+class QGroupBox;
 
 namespace mm {
     class CircleOptions : public QWidget {
@@ -25,6 +26,7 @@ namespace mm {
         CircleOptions& setMaxScore(int);
         QColor getColor() const;
         bool histogram() const;
+        void retranslateUi();
     private slots:
         void onValueChanged(int);
         void pickColor();
@@ -42,6 +44,8 @@ namespace mm {
         QLabel *colorLabel;
         QPushButton *colorPickBtn;
         QCheckBox *chkHistogram;
+        QGroupBox *circlesGroup;
+        QLabel *lblRadiusMinMax, *lblScoreMinMax, *lblMarkerColor, *lblHistogram;
     };
 }
 

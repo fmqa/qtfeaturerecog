@@ -9,6 +9,7 @@ class QSpinBox;
 class QCheckBox;
 class QPushButton;
 class QLabel;
+class QGroupBox;
 
 namespace mm {
     class EllipseOptions : public QWidget {
@@ -30,6 +31,7 @@ namespace mm {
         EllipseOptions& setMaxMinor(int);
         EllipseOptions& setMinScore(int);
         EllipseOptions& setMaxScore(int);
+        void retranslateUi();
     private:
         void setColor();
     private slots:
@@ -52,6 +54,8 @@ namespace mm {
         QLabel *colorLabel;
         QPushButton *colorPickBtn;
         QCheckBox *chkHistogram;
+        QGroupBox *ellipsesGroup;
+        QLabel *lblMajorMinMax, *lblMinorMinMax, *lblScoreMinMax, *lblMarker, *lblRHT;
     };
 }
 

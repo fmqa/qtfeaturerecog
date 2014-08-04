@@ -12,13 +12,14 @@
 mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage(10, 5, QImage::Format_RGB32), markerColor(qRgb(255,0,0)) {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     
-    QGroupBox *group = new QGroupBox(tr("Circles"));
+    circlesGroup = new QGroupBox;
     QVBoxLayout *vbox = new QVBoxLayout;
+    
     {
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Radius min/max:")));
+                hbox->addWidget(lblRadiusMinMax = new QLabel);
                 hbox->addWidget(minRadiusSpinBox = new QSpinBox);
                 hbox->addWidget(maxRadiusSpinBox = new QSpinBox);
             container->setLayout(hbox);
@@ -28,7 +29,7 @@ mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Score min/max:")));
+                hbox->addWidget(lblScoreMinMax = new QLabel);
                 hbox->addWidget(minScoreSpinBox = new QSpinBox);
                 hbox->addWidget(maxScoreSpinBox = new QSpinBox);
             container->setLayout(hbox);
@@ -38,7 +39,7 @@ mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Marker color:")));
+                hbox->addWidget(lblMarkerColor = new QLabel);
                 hbox->addWidget(colorLabel = new QLabel);
                 hbox->addWidget(colorPickBtn = new QPushButton("..."));
             container->setLayout(hbox);
@@ -48,13 +49,14 @@ mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(chkHistogram = new QCheckBox(tr("Histogram")));
+                hbox->addWidget(chkHistogram = new QCheckBox);
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
     }
-    group->setLayout(vbox);
-    mainLayout->addWidget(group);
+    
+    circlesGroup->setLayout(vbox);
+    mainLayout->addWidget(circlesGroup);
     
     setLayout(mainLayout);
     
@@ -75,6 +77,7 @@ mm::CircleOptions::CircleOptions(QWidget *parent) : QWidget(parent), markerImage
     maxScoreSpinBox->setValue(380);
     
     setColor();
+    retranslateUi();
 }
 
 void mm::CircleOptions::onValueChanged(int) {
@@ -137,4 +140,12 @@ void mm::CircleOptions::setColor() {
 
 bool mm::CircleOptions::histogram() const {
     return chkHistogram->isChecked();
+}
+
+void mm::CircleOptions::retranslateUi() {
+    circlesGroup->setTitle(tr("Circles"));
+    lblRadiusMinMax->setText(tr("Radius min/max:"));
+    lblScoreMinMax->setText(tr("Score min/max:"));
+    lblMarkerColor->setText(tr("Marker color:"));
+    chkHistogram->setText(tr("Histogram"));
 }

@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QAction>
 #include <QMenu>
 #include <QToolBar>
@@ -15,6 +16,7 @@
 #include <QList>
 #include <QUrl>
 #include <QStatusBar>
+#include <QTranslator>
 #include "partials/edgeoptions.hh"
 #include "partials/circleoptions.hh"
 #include "partials/ellipseoptions.hh"
@@ -22,69 +24,112 @@
 #include "ui.hh"
 
 static void uiInitActions(mm::Ui *ui) {    
-    ui->actions.open = new QAction(QIcon::fromTheme("document-open"), QObject::tr("&Open..."), ui);
+    ui->actions.open = new QAction(QIcon::fromTheme("document-open"), QString(), ui);
     ui->actions.open->setShortcuts(QKeySequence::Open);
+    
+    ui->actions.save = new QAction(QIcon::fromTheme("document-save"), QString(), ui);
+    ui->actions.save->setShortcuts(QKeySequence::Save);
+    
+    ui->actions.savecirc = new QAction(QIcon::fromTheme("document-save"), QString(), ui);
+    ui->actions.savecirc->setShortcuts(QKeySequence::Save);
+    
+    ui->actions.copy = new QAction(QIcon::fromTheme("edit-copy"), QString(), ui);
+    ui->actions.copy->setShortcuts(QKeySequence::Copy);
+    
+    ui->actions.copycirc = new QAction(QIcon::fromTheme("edit-copy"), QString(), ui);
+    ui->actions.copycirc->setShortcuts(QKeySequence::Copy);
+    
+    ui->actions.exit = new QAction(ui);
+    ui->actions.exit->setShortcuts(QKeySequence::Quit);
+    
+    ui->actions.viewsrc = new QAction(ui);
+    
+    ui->actions.viewedges = new QAction(ui);
+
+    ui->actions.viewtransfm = new QAction(ui);
+    
+    ui->actions.fullscr = new QAction(ui);
+    ui->actions.fullscr->setCheckable(true);
+    
+    ui->actions.german = new QAction(QObject::tr("&German"), ui);
+    ui->actions.english = new QAction(QObject::tr("&English"), ui);
+}
+
+static void uiInitActionText(mm::Ui *ui) {
+    ui->actions.open->setText(QObject::tr("&Open..."));
     ui->actions.open->setStatusTip(QObject::tr("Open an image file"));
     
-    ui->actions.save = new QAction(QIcon::fromTheme("document-save"), QObject::tr("&Save..."), ui);
-    ui->actions.save->setShortcuts(QKeySequence::Save);
+    ui->actions.save->setText(QObject::tr("&Save..."));
     ui->actions.save->setStatusTip(QObject::tr("Save the active image"));
     
-    ui->actions.savecirc = new QAction(QIcon::fromTheme("document-save"), QObject::tr("&Save circle mask..."), ui);
-    ui->actions.savecirc->setShortcuts(QKeySequence::Save);
+    ui->actions.savecirc->setText(QObject::tr("&Save circle mask..."));
     ui->actions.savecirc->setStatusTip(QObject::tr("Save the circle contents as an image"));
     
-    ui->actions.copy = new QAction(QIcon::fromTheme("edit-copy"), QObject::tr("&Copy..."), ui);
-    ui->actions.copy->setShortcuts(QKeySequence::Copy);
+    ui->actions.copy->setText(QObject::tr("&Copy..."));
     ui->actions.copy->setStatusTip(QObject::tr("Copy the active image to clipboard"));
     
-    ui->actions.copycirc = new QAction(QIcon::fromTheme("edit-copy"), QObject::tr("&Copy circle mask..."), ui);
-    ui->actions.copycirc->setShortcuts(QKeySequence::Copy);
-    ui->actions.copycirc->setStatusTip(QObject::tr("Copy the circle contents to the clipboard"));
+    ui->actions.copycirc->setText(QObject::tr("&Copy circle mask..."));
+    ui->actions.copycirc->setStatusTip(QObject::tr("Save the circle contents as an image"));
     
-    ui->actions.exit = new QAction(QObject::tr("E&xit"), ui);
-    ui->actions.exit->setShortcuts(QKeySequence::Quit);
+    ui->actions.exit->setText(QObject::tr("E&xit"));
     ui->actions.exit->setStatusTip(QObject::tr("Exit HoughStudio"));
     
-    ui->actions.viewsrc = new QAction(QObject::tr("O&riginal image"), ui);
+    ui->actions.viewsrc->setText(QObject::tr("O&riginal image"));
     ui->actions.viewsrc->setStatusTip(QObject::tr("Show the original image"));
     
-    ui->actions.viewedges = new QAction(QObject::tr("E&dge Map"), ui);
+    ui->actions.viewedges->setText(QObject::tr("E&dge Map"));
     ui->actions.viewedges->setStatusTip(QObject::tr("Show the edge map of the image"));
-
-    ui->actions.viewtransfm = new QAction(QObject::tr("T&ransformed View"), ui);
-    ui->actions.viewtransfm->setStatusTip(QObject::tr("Show the transformed image")); 
     
-    ui->actions.fullscr = new QAction(QObject::tr("F&ullscreen Mode"), ui);
+    ui->actions.viewtransfm->setText(QObject::tr("T&ransformed View"));
+    ui->actions.viewtransfm->setStatusTip(QObject::tr("Show the transformed image"));
+    
+    ui->actions.fullscr->setText(QObject::tr("F&ullscreen Mode"));
     ui->actions.fullscr->setStatusTip(QObject::tr("Activate the full-screen mode"));
-    ui->actions.fullscr->setCheckable(true);
+    
+    ui->actions.german->setText(QObject::tr("&German"));
+    ui->actions.english->setText(QObject::tr("&English"));
 }
 
 static void uiInitMenus(mm::Ui *ui) {
-    ui->menus.file = ui->menuBar()->addMenu(QObject::tr("&File"));
+    ui->menus.file = ui->menuBar()->addMenu(QString());
     ui->menus.file->addAction(ui->actions.open);
     ui->menus.file->addAction(ui->actions.save);
     ui->menus.file->addAction(ui->actions.savecirc);
     ui->menus.file->addSeparator();
     ui->menus.file->addAction(ui->actions.exit);
     
-    ui->menus.edit = ui->menuBar()->addMenu(QObject::tr("&Edit"));
+    ui->menus.edit = ui->menuBar()->addMenu(QString());
     ui->menus.edit->addAction(ui->actions.copy);
     ui->menus.edit->addAction(ui->actions.copycirc);
     
-    ui->menus.view = ui->menuBar()->addMenu(QObject::tr("&View"));
+    ui->menus.view = ui->menuBar()->addMenu(QString());
     ui->menus.view->addAction(ui->actions.viewsrc);
     ui->menus.view->addAction(ui->actions.viewedges);
     ui->menus.view->addAction(ui->actions.viewtransfm);
     ui->menus.view->addSeparator();
     ui->menus.view->addAction(ui->actions.fullscr);
+    
+    ui->menus.language = ui->menuBar()->addMenu(QString());
+    ui->menus.language->addAction(ui->actions.english);
+    ui->menus.language->addAction(ui->actions.german);
+}
+
+static void uiInitMenuText(mm::Ui *ui) {
+    ui->menus.file->setTitle(QObject::tr("&File"));
+    ui->menus.edit->setTitle(QObject::tr("&Edit"));
+    ui->menus.view->setTitle(QObject::tr("&View"));
+    ui->menus.language->setTitle(QObject::tr("&Language"));
 }
 
 static void uiInitToolbars(mm::Ui *ui) {
-    ui->toolbars.file = ui->addToolBar(QObject::tr("File"));
+    ui->toolbars.file = ui->addToolBar(QString());
     ui->toolbars.file->addAction(ui->actions.open);
     ui->toolbars.file->addAction(ui->actions.save);
     ui->toolbars.file->addAction(ui->actions.copy);
+}
+
+static void uiInitToolbarText(mm::Ui *ui) {
+    ui->toolbars.file->setWindowTitle(QObject::tr("File"));
 }
 
 static void uiInitOptions(mm::Ui *ui) {
@@ -92,14 +137,29 @@ static void uiInitOptions(mm::Ui *ui) {
     ui->options.circles = new mm::CircleOptions;
     ui->options.ellipses = new mm::EllipseOptions;
     ui->transfmtabs = new QTabWidget;
-    ui->transfmtabs->addTab(ui->options.circles, QObject::tr("Circles"));
-    ui->transfmtabs->addTab(ui->options.ellipses, QObject::tr("Ellipses"));
+    ui->transfmtabs->addTab(ui->options.circles, QString());
+    ui->transfmtabs->addTab(ui->options.ellipses, QString());
+}
+
+static void uiInitOptionsText(mm::Ui *ui) {
+    ui->transfmtabs->setTabText(ui->transfmtabs->indexOf(ui->options.circles), QObject::tr("Circles"));
+    ui->transfmtabs->setTabText(ui->transfmtabs->indexOf(ui->options.ellipses), QObject::tr("Ellipses"));
+    ui->options.edges->retranslateUi();
+    ui->options.circles->retranslateUi();
+    ui->options.ellipses->retranslateUi();
+    ui->images->retranslateUi();
 }
 
 static void uiInitControls(mm::Ui *ui) {
-    ui->controls.detectedges = new QPushButton(QObject::tr("Detect edges"));
-    ui->controls.applytransfm = new QPushButton(QObject::tr("Apply"));
-    ui->controls.stop = new QPushButton(QObject::tr("Stop"));
+    ui->controls.detectedges = new QPushButton;
+    ui->controls.applytransfm = new QPushButton;
+    ui->controls.stop = new QPushButton;
+}
+
+static void uiInitControlsText(mm::Ui *ui) {
+    ui->controls.detectedges->setText(QObject::tr("Detect edges"));
+    ui->controls.applytransfm->setText(QObject::tr("Apply"));
+    ui->controls.stop->setText(QObject::tr("Stop"));
 }
 
 static void uiAssignTransformControls(QLayout *layout, mm::Ui *ui) {
@@ -150,6 +210,13 @@ mm::Ui::Ui() {
     setCentralWidget(uiCreateMainPanel(this));
     setAcceptDrops(true);
     statusBar()->addPermanentWidget(coordLabel = new QLabel);
+    
+    translator = new QTranslator(this);
+    
+    connect(actions.german, SIGNAL(triggered()), this, SLOT(changeLanguageGerman()));
+    connect(actions.english, SIGNAL(triggered()), this, SLOT(changeLanguageEnglish()));
+    
+    retranslateUi();
 }
 
 QString mm::Ui::requestImage() {
@@ -213,6 +280,23 @@ void mm::Ui::disableControls() {
     controls.applytransfm->setEnabled(false);
 }
 
+void mm::Ui::changeLanguageEnglish() {
+    qApp->removeTranslator(translator);
+}
+
+void mm::Ui::changeLanguageGerman() {
+    translator->load("languages/houghstudio_de");
+    qApp->installTranslator(translator);
+}
+
+void mm::Ui::retranslateUi() {
+    uiInitActionText(this);
+    uiInitMenuText(this);
+    uiInitToolbarText(this);
+    uiInitOptionsText(this);
+    uiInitControlsText(this);
+}
+
 void mm::Ui::alertEmptySourceImage() {
     QMessageBox msg(QMessageBox::Warning,
                     tr("HoughStudio error"),
@@ -250,6 +334,13 @@ void mm::Ui::dropEvent(QDropEvent *event) {
             emit imageDropped(image);
         }
     }
+}
+
+void mm::Ui::changeEvent(QEvent *event) {
+    if (event->type() == QEvent::LanguageChange) {
+        retranslateUi();
+    }
+    QMainWindow::changeEvent(event);
 }
 
 void mm::Ui::alertSaveError(const QString &file) {

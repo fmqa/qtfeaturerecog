@@ -10,32 +10,33 @@
 mm::EdgeOptions::EdgeOptions(QWidget * parent) : QWidget(parent) {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     
-    QGroupBox *group = new QGroupBox(tr("Edge Extractor"));
+    extGroup = new QGroupBox;
     QVBoxLayout *vbox = new QVBoxLayout;
+    
     {
         {
-            QGroupBox *igroup = new QGroupBox(tr("Blur"));
+            blurGroup = new QGroupBox;
             QVBoxLayout *ivbox = new QVBoxLayout;
             
-            ivbox->addWidget(enableGaussianBlurCheckBox = new QCheckBox(tr("Enable")));
+            ivbox->addWidget(enableGaussianBlurCheckBox = new QCheckBox);
             connect(enableGaussianBlurCheckBox, SIGNAL(toggled(bool)), this, SLOT(onStateChanged(bool)));
             {
                 QWidget *container = new QWidget;
                 QHBoxLayout *hbox = new QHBoxLayout;
-                    hbox->addWidget(new QLabel(tr("Radius")));
+                    hbox->addWidget(lblRadius = new QLabel);
                     hbox->addWidget(gaussianBlurRadiusSpinBox = new QSpinBox);
                 container->setLayout(hbox);
                 ivbox->addWidget(container);
             }
             
-            igroup->setLayout(ivbox);
-            vbox->addWidget(igroup);
+            blurGroup->setLayout(ivbox);
+            vbox->addWidget(blurGroup);
         }
         
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Min. Threshold")));
+                hbox->addWidget(lblMinThreshold = new QLabel);
                 hbox->addWidget(cannyMinThresholdSpinBox = new QSpinBox);
                 connect(cannyMinThresholdSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
             container->setLayout(hbox);
@@ -45,15 +46,16 @@ mm::EdgeOptions::EdgeOptions(QWidget * parent) : QWidget(parent) {
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Max. Threshold")));
+                hbox->addWidget(lblMaxThreshold = new QLabel);
                 hbox->addWidget(cannyMaxThresholdSpinBox = new QSpinBox);
                 connect(cannyMaxThresholdSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
     }
-    group->setLayout(vbox);
-    mainLayout->addWidget(group);
+    
+    extGroup->setLayout(vbox);
+    mainLayout->addWidget(extGroup);
     
     setLayout(mainLayout);
     
@@ -64,6 +66,8 @@ mm::EdgeOptions::EdgeOptions(QWidget * parent) : QWidget(parent) {
     cannyMaxThresholdSpinBox->setValue(20);
     enableGaussianBlurCheckBox->setChecked(true);
     gaussianBlurRadiusSpinBox->setValue(1);
+    
+    retranslateUi();
 }
 
 void mm::EdgeOptions::onValueChanged(int) {
@@ -72,6 +76,15 @@ void mm::EdgeOptions::onValueChanged(int) {
 
 void mm::EdgeOptions::onStateChanged(bool) {
     emit changed();
+}
+
+void mm::EdgeOptions::retranslateUi() {
+    extGroup->setTitle(tr("Edge Extractor"));
+    blurGroup->setTitle(tr("Blur"));
+    enableGaussianBlurCheckBox->setText(tr("Enable"));
+    lblRadius->setText(tr("Radius"));
+    lblMinThreshold->setText(tr("Min. Threshold"));
+    lblMaxThreshold->setText(tr("Max. Threshold"));
 }
 
 bool mm::EdgeOptions::blurEnabled() const {

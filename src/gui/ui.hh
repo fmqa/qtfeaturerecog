@@ -9,10 +9,12 @@ class QAction;
 class QTabWidget;
 class QPushButton;
 class QLabel;
+class QEvent;
 class QDropEvent;
 class QString;
 class QImage;
 class QDragEnterEvent;
+class QTranslator;
 
 namespace mm {
     class EdgeOptions;
@@ -23,11 +25,13 @@ namespace mm {
     class Ui : public QMainWindow {
         Q_OBJECT
     private:
-        struct uimenus { QMenu *file, *edit, *view; };
+        struct uimenus { QMenu *file, *edit, *view, *language; };
         struct uitoolbars { QToolBar *file; };
-        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr; };
+        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr, *german, *english; };
         struct uioptions { EdgeOptions *edges; CircleOptions *circles; EllipseOptions *ellipses; };
         struct uicontrols { QPushButton *detectedges, *applytransfm, *stop; };
+    private:
+        QTranslator *translator;
     public:
         Ui();
         QString requestImage();
@@ -40,6 +44,11 @@ namespace mm {
     public slots:
         void enableControls();
         void disableControls();
+    private slots:
+        void changeLanguageGerman();
+        void changeLanguageEnglish();
+    private:
+        void retranslateUi();
     signals:
         void fileDropped(const QString &);
         void imageDropped(const QImage &);
@@ -55,6 +64,7 @@ namespace mm {
     protected:
         void dragEnterEvent(QDragEnterEvent *) override;
         void dropEvent(QDropEvent *) override;
+        void changeEvent(QEvent *) override;
     };
 }
 

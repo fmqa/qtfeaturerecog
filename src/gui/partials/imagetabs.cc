@@ -18,25 +18,25 @@ mm::ImageTabs::ImageTabs(QWidget *parent) : QWidget(parent) {
     labelSrc = new QLabel;
     labelSrc->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     scrollAreaSrc->setWidget(labelSrc);
-    tabWidget->addTab(scrollAreaSrc, tr("Source"));
+    tabWidget->addTab(scrollAreaSrc, QString());
     
     scrollAreaEdges = new QScrollArea;
     labelEdges = new QLabel;
     labelEdges->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     scrollAreaEdges->setWidget(labelEdges);
-    tabWidget->addTab(scrollAreaEdges, tr("Edges"));
+    tabWidget->addTab(scrollAreaEdges, QString());
     
     scrollAreaTransform = new QScrollArea;
     labelTransform = new QLabel;
     labelTransform->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     scrollAreaTransform->setWidget(labelTransform);
-    tabWidget->addTab(scrollAreaTransform, tr("Transform"));
+    tabWidget->addTab(scrollAreaTransform, QString());
     
     scrollAreaHistogram = new QScrollArea;
     labelHistogram = new QLabel;
     labelHistogram->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     scrollAreaHistogram->setWidget(labelHistogram);
-    tabWidget->addTab(scrollAreaHistogram, tr("Histogram"));
+    tabWidget->addTab(scrollAreaHistogram, QString());
     
     mainLayout->addWidget(tabWidget);
     setLayout(mainLayout);
@@ -145,3 +145,11 @@ QLabel& mm::ImageTabs::widget(mm::ImageTabs::tab t) {
         default: return *labelSrc;
     }
 }
+
+void mm::ImageTabs::retranslateUi() {
+    tabWidget->setTabText(tabWidget->indexOf(scrollAreaSrc), tr("Source"));
+    tabWidget->setTabText(tabWidget->indexOf(scrollAreaEdges), tr("Edges"));
+    tabWidget->setTabText(tabWidget->indexOf(scrollAreaTransform), tr("Transform"));
+    tabWidget->setTabText(tabWidget->indexOf(scrollAreaHistogram), tr("Histogram"));
+}
+

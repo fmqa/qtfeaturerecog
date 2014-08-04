@@ -21,24 +21,6 @@ HEADERS += gui/ui.hh \
            util/ellipsehough.hh \
            include/raster/util/view2d.hh \
            include/raster/util/flat_accumulator.hh
-#           rst/compose.h \
-#           rst/std.h \
-#           rst/traits.h \
-#           rst/wrap.h \
-#           util/circles.hh \
-#           util/ellipses.hh \
-#           util/iter.hh \
-#           util/lines.hh \
-#           util/pairs.hh \
-#           rst/adapters/qt.h \
-#           rst/filter/canny.h \
-#           rst/filter/conv.h \
-#           rst/filter/gaussian.h \
-#           rst/filter/hyst.h \
-#           rst/filter/nms.h \
-#           rst/filter/sobel.h \
-#           rst/mat/bitvec_mat.h \
-#           rst/mat/observable_mat.h
 SOURCES += gui/main.cc \
            gui/ui.cc \
            gui/controller.cc \
@@ -52,8 +34,4 @@ SOURCES += gui/main.cc \
            include/raster/flt/gaussian.cc \
            include/raster/flt/sobel.cc \
            include/util/circles.cc
-#           rst/wrap.cc \
-#           util/pairs.cc \
-#           util/testcircles.cc \
-#           rst/filter/gaussian.cc \
-#           rst/filter/sobel.cc
+TRANSLATIONS += languages/houghstudio_de.ts

@@ -21,6 +21,7 @@ namespace mm {
         void saveCurrentTabImage();
         void currentTabImageToClipboard();
         QLabel& widget(tab);
+        void retranslateUi();
     private:
         QTabWidget *tabWidget;
         QScrollArea *scrollAreaSrc, *scrollAreaEdges, *scrollAreaTransform,

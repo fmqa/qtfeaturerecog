@@ -12,13 +12,13 @@
 mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerImage(10, 5, QImage::Format_RGB32), markerColor(qRgb(255,0,0)) {
     QVBoxLayout *mainLayout = new QVBoxLayout;
     
-    QGroupBox *group = new QGroupBox(tr("Ellipses"));
+    ellipsesGroup = new QGroupBox(tr("Ellipses"));
     QVBoxLayout *vbox = new QVBoxLayout;
     {
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Major min/max:")));
+                hbox->addWidget(lblMajorMinMax = new QLabel);
                 hbox->addWidget(minMajorSpinBox = new QSpinBox);
                 hbox->addWidget(maxMajorSpinBox = new QSpinBox);
             container->setLayout(hbox);
@@ -28,7 +28,7 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerIma
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Minor min/max:")));
+                hbox->addWidget(lblMinorMinMax = new QLabel);
                 hbox->addWidget(minMinorSpinBox = new QSpinBox);
                 hbox->addWidget(maxMinorSpinBox = new QSpinBox);
             container->setLayout(hbox);
@@ -38,7 +38,7 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerIma
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Score min/max:")));
+                hbox->addWidget(lblScoreMinMax = new QLabel);
                 hbox->addWidget(minScoreSpinBox = new QSpinBox);
                 hbox->addWidget(maxScoreSpinBox = new QSpinBox);
             container->setLayout(hbox);
@@ -48,7 +48,7 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerIma
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(new QLabel(tr("Marker color:")));
+                hbox->addWidget(lblMarker = new QLabel);
                 hbox->addWidget(colorLabel = new QLabel);
                 hbox->addWidget(colorPickBtn = new QPushButton("..."));
             container->setLayout(hbox);
@@ -58,15 +58,15 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerIma
         {
             QWidget *container = new QWidget;
             QHBoxLayout *hbox = new QHBoxLayout;
-                hbox->addWidget(chkRHT = new QCheckBox(tr("RHT")));
+                hbox->addWidget(chkRHT = new QCheckBox);
                 hbox->addWidget(rhtEdgePercentage = new QSpinBox);
                 hbox->addWidget(new QLabel("%"));
             container->setLayout(hbox);
             vbox->addWidget(container);
         }
     }
-    group->setLayout(vbox);
-    mainLayout->addWidget(group);
+    ellipsesGroup->setLayout(vbox);
+    mainLayout->addWidget(ellipsesGroup);
     
     setLayout(mainLayout);
     
@@ -101,6 +101,7 @@ mm::EllipseOptions::EllipseOptions(QWidget *parent) : QWidget(parent), markerIma
     connect(colorPickBtn, SIGNAL(clicked()), this, SLOT(pickColor()));
     
     setColor();
+    retranslateUi();
 }
 
 void mm::EllipseOptions::onValueChanged(int) {
@@ -182,4 +183,13 @@ void mm::EllipseOptions::setColor() {
         painter.fillRect(0, 0, 10, 5, markerColor);
     }
     colorLabel->setPixmap(QPixmap::fromImage(markerImage));
+}
+
+void mm::EllipseOptions::retranslateUi() {
+    ellipsesGroup->setTitle(tr("Ellipses"));
+    lblMajorMinMax->setText(tr("Major min/max:"));
+    lblMinorMinMax->setText(tr("Minor min/max:"));
+    lblScoreMinMax->setText(tr("Score min/max:"));
+    lblMarker->setText(tr("Marker color:"));
+    chkRHT->setText(tr("RHT"));
 }
