@@ -1,6 +1,8 @@
 #ifndef LINES_HH
 #define LINES_HH
 
+#include <cmath>
+
 /**
  * Algorithms for lines and linear functions.
  */
