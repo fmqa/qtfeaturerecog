@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = houghstudio
 INCLUDEPATH += . gui include model
-QT += widgets
+QT += widgets multimedia multimediawidgets
 QMAKE_CXXFLAGS += -g -Wall -std=c++11
 
 # Input
@@ -18,6 +18,9 @@ HEADERS += gui/ui.hh \
            gui/workers/edgeworker.hh \
            gui/workers/circleworker.hh \
            gui/workers/ellipseworker.hh \
+           gui/camera/camera.hh \
+           gui/camera/cameraui.hh \
+           gui/camera/imagesettings.hh \
            util/ellipsehough.hh \
            include/raster/util/view2d.hh \
            include/raster/util/flat_accumulator.hh
@@ -31,7 +34,11 @@ SOURCES += gui/main.cc \
            gui/workers/edgeworker.cc \
            gui/workers/circleworker.cc \
            gui/workers/ellipseworker.cc \
+           gui/camera/camera.cc \
+           gui/camera/cameraui.cc \
+           gui/camera/imagesettings.cc \
            include/raster/flt/gaussian.cc \
            include/raster/flt/sobel.cc \
            include/util/circles.cc
+FORMS += gui/camera/imagesettings.ui
 TRANSLATIONS += languages/houghstudio_de.ts

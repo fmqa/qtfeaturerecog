@@ -65,7 +65,7 @@ static void reset(mm::Ui &ui, mm::controller::statedata &state) {
     ui.images->switchTab(mm::ImageTabs::srctab);
 }
 
-mm::controller::controller() : QObject(), ui(), state(), thread(), timer() {
+mm::controller::controller() : QObject(), ui(), camera(&ui), state(), thread(), timer() {
     bind();
     ui.show();
 }
@@ -81,11 +81,13 @@ void mm::controller::bind() {
     connect(ui.actions.viewedges, SIGNAL(triggered()), this, SLOT(viewedges()));
     connect(ui.actions.viewtransfm, SIGNAL(triggered()), this, SLOT(viewtransfm()));
     connect(ui.actions.fullscr, SIGNAL(triggered(bool)), this, SLOT(fullscr(bool)));
+    connect(ui.actions.capture, SIGNAL(triggered()), this, SLOT(capture()));
     connect(ui.controls.detectedges, SIGNAL(clicked()), this, SLOT(detectedges()));
     connect(ui.controls.applytransfm, SIGNAL(clicked()), this, SLOT(applytransfm()));
     connect(ui.controls.stop, SIGNAL(clicked()), this, SLOT(stop()));
     connect(&ui, SIGNAL(fileDropped(const QString &)), this, SLOT(loadDroppedFile(const QString &)));
     connect(&ui, SIGNAL(imageDropped(const QImage &)), this, SLOT(loadDroppedImage(const QImage &)));
+    connect(&camera, SIGNAL(imageCaptured(const QImage &)), this, SLOT(imageCaptured(const QImage &)));
     ui.images->widget(ImageTabs::histogramtab).setMouseTracking(true);
     ui.images->widget(ImageTabs::histogramtab).installEventFilter(this);
 }
@@ -141,6 +143,11 @@ void mm::controller::copycirc() {
 
 void mm::controller::close() {
     ui.close();
+}
+
+void mm::controller::capture() {
+    camera.init();
+    camera.show();
 }
 
 void mm::controller::viewsrc() {
@@ -368,6 +375,12 @@ void mm::controller::loadDroppedFile(const QString &file) {
 
 void mm::controller::loadDroppedImage(const QImage &image) {
     state.source.image = image;
+    reset(ui, state);
+}
+
+void mm::controller::imageCaptured(const QImage &image) {
+    state.source.image = image;
+    camera.close();
     reset(ui, state);
 }
 

@@ -51,8 +51,10 @@ static void uiInitActions(mm::Ui *ui) {
     ui->actions.fullscr = new QAction(ui);
     ui->actions.fullscr->setCheckable(true);
     
-    ui->actions.german = new QAction(QObject::tr("&German"), ui);
-    ui->actions.english = new QAction(QObject::tr("&English"), ui);
+    ui->actions.german = new QAction(ui);
+    ui->actions.english = new QAction(ui);
+    
+    ui->actions.capture = new QAction(ui);
 }
 
 static void uiInitActionText(mm::Ui *ui) {
@@ -88,6 +90,8 @@ static void uiInitActionText(mm::Ui *ui) {
     
     ui->actions.german->setText(QObject::tr("&German"));
     ui->actions.english->setText(QObject::tr("&English"));
+    
+    ui->actions.capture->setText(QObject::tr("Ca&pture"));
 }
 
 static void uiInitMenus(mm::Ui *ui) {
@@ -95,6 +99,7 @@ static void uiInitMenus(mm::Ui *ui) {
     ui->menus.file->addAction(ui->actions.open);
     ui->menus.file->addAction(ui->actions.save);
     ui->menus.file->addAction(ui->actions.savecirc);
+    ui->menus.file->addAction(ui->actions.capture);
     ui->menus.file->addSeparator();
     ui->menus.file->addAction(ui->actions.exit);
     

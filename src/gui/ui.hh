@@ -27,7 +27,7 @@ namespace mm {
     private:
         struct uimenus { QMenu *file, *edit, *view, *language; };
         struct uitoolbars { QToolBar *file; };
-        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr, *german, *english; };
+        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr, *german, *english, *capture; };
         struct uioptions { EdgeOptions *edges; CircleOptions *circles; EllipseOptions *ellipses; };
         struct uicontrols { QPushButton *detectedges, *applytransfm, *stop; };
     private:

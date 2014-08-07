@@ -14,8 +14,8 @@
 #include <QTimer>
 #include <QEvent>
 #include <util/circles.hh>
-
 #include "ui.hh"
+#include "camera/camera.hh"
 
 namespace mm {
     class EdgeWorker;
@@ -70,6 +70,7 @@ namespace mm {
         void copy();
         void copycirc();
         void close();
+        void capture();
         void viewsrc();
         void viewedges();
         void viewtransfm();
@@ -87,10 +88,12 @@ namespace mm {
         void updateHistogram();
         void loadDroppedFile(const QString &);
         void loadDroppedImage(const QImage &);
+        void imageCaptured(const QImage &);
     protected:
         bool eventFilter(QObject *, QEvent *) override;
     private:
         Ui ui;
+        Camera camera;
         statedata state;
         workerdata workers;
         QThread *thread;
