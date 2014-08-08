@@ -65,7 +65,7 @@ static void reset(mm::Ui &ui, mm::controller::statedata &state) {
     ui.images->switchTab(mm::ImageTabs::srctab);
 }
 
-mm::controller::controller() : QObject(), ui(), camera(&ui), state(), thread(), timer() {
+mm::controller::controller() : QObject(), ui(), camera(&ui), tts(this), state(), thread(), timer() {
     bind();
     ui.show();
 }
@@ -88,6 +88,7 @@ void mm::controller::bind() {
     connect(&ui, SIGNAL(fileDropped(const QString &)), this, SLOT(loadDroppedFile(const QString &)));
     connect(&ui, SIGNAL(imageDropped(const QImage &)), this, SLOT(loadDroppedImage(const QImage &)));
     connect(&camera, SIGNAL(imageCaptured(const QImage &)), this, SLOT(imageCaptured(const QImage &)));
+    connect(&tts, SIGNAL(failed()), this, SLOT(ttsFailed()));
     ui.images->widget(ImageTabs::histogramtab).setMouseTracking(true);
     ui.images->widget(ImageTabs::histogramtab).installEventFilter(this);
 }
@@ -348,6 +349,9 @@ void mm::controller::updateCircleProgress() {
 
 void mm::controller::circlesDone() {
     state.circles = workers.circles->circles();
+    if (ui.actions.tts->isChecked()) {
+        tts.speak(QString(state.transfm.features), ui.currentLanguage());
+    }
 }
 
 void mm::controller::updateEllipseProgress() {
@@ -382,6 +386,9 @@ void mm::controller::imageCaptured(const QImage &image) {
     state.source.image = image;
     camera.close();
     reset(ui, state);
+}
+
+void mm::controller::ttsFailed() {
 }
 
 bool mm::controller::eventFilter(QObject *obj, QEvent *event) {

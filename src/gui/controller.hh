@@ -16,6 +16,7 @@
 #include <util/circles.hh>
 #include "ui.hh"
 #include "camera/camera.hh"
+#include "tts/tts.hh"
 
 namespace mm {
     class EdgeWorker;
@@ -89,11 +90,13 @@ namespace mm {
         void loadDroppedFile(const QString &);
         void loadDroppedImage(const QImage &);
         void imageCaptured(const QImage &);
+        void ttsFailed();
     protected:
         bool eventFilter(QObject *, QEvent *) override;
     private:
         Ui ui;
         Camera camera;
+        tts::festival tts;
         statedata state;
         workerdata workers;
         QThread *thread;

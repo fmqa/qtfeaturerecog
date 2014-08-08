@@ -21,6 +21,7 @@ HEADERS += gui/ui.hh \
            gui/camera/camera.hh \
            gui/camera/cameraui.hh \
            gui/camera/imagesettings.hh \
+           gui/tts/tts.hh \
            util/ellipsehough.hh \
            include/raster/util/view2d.hh \
            include/raster/util/flat_accumulator.hh
@@ -37,6 +38,7 @@ SOURCES += gui/main.cc \
            gui/camera/camera.cc \
            gui/camera/cameraui.cc \
            gui/camera/imagesettings.cc \
+           gui/tts/tts.cc \
            include/raster/flt/gaussian.cc \
            include/raster/flt/sobel.cc \
            include/util/circles.cc

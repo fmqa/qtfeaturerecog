@@ -55,6 +55,9 @@ static void uiInitActions(mm::Ui *ui) {
     ui->actions.english = new QAction(ui);
     
     ui->actions.capture = new QAction(ui);
+    
+    ui->actions.tts = new QAction(ui);
+    ui->actions.tts->setCheckable(true);
 }
 
 static void uiInitActionText(mm::Ui *ui) {
@@ -92,6 +95,7 @@ static void uiInitActionText(mm::Ui *ui) {
     ui->actions.english->setText(QObject::tr("&English"));
     
     ui->actions.capture->setText(QObject::tr("Ca&pture"));
+    ui->actions.tts->setText(QObject::tr("&Text-to-Speech"));
 }
 
 static void uiInitMenus(mm::Ui *ui) {
@@ -114,6 +118,9 @@ static void uiInitMenus(mm::Ui *ui) {
     ui->menus.view->addSeparator();
     ui->menus.view->addAction(ui->actions.fullscr);
     
+    ui->menus.extras = ui->menuBar()->addMenu(QString());
+    ui->menus.extras->addAction(ui->actions.tts);
+    
     ui->menus.language = ui->menuBar()->addMenu(QString());
     ui->menus.language->addAction(ui->actions.english);
     ui->menus.language->addAction(ui->actions.german);
@@ -123,6 +130,7 @@ static void uiInitMenuText(mm::Ui *ui) {
     ui->menus.file->setTitle(QObject::tr("&File"));
     ui->menus.edit->setTitle(QObject::tr("&Edit"));
     ui->menus.view->setTitle(QObject::tr("&View"));
+    ui->menus.extras->setTitle(QObject::tr("&Extras"));
     ui->menus.language->setTitle(QObject::tr("&Language"));
 }
 
@@ -206,7 +214,7 @@ static QWidget *uiCreateMainPanel(mm::Ui *ui) {
     return container;
 }
 
-mm::Ui::Ui() {
+mm::Ui::Ui() : language("en") {
     uiInitActions(this);
     uiInitMenus(this);
     uiInitToolbars(this);
@@ -287,11 +295,13 @@ void mm::Ui::disableControls() {
 
 void mm::Ui::changeLanguageEnglish() {
     qApp->removeTranslator(translator);
+    language = "en";
 }
 
 void mm::Ui::changeLanguageGerman() {
     translator->load("languages/houghstudio_de");
     qApp->installTranslator(translator);
+    language = "de";
 }
 
 void mm::Ui::retranslateUi() {
@@ -356,4 +366,7 @@ void mm::Ui::alertSaveError(const QString &file) {
     msg.addButton(tr("&Ok"), QMessageBox::AcceptRole);
     msg.exec();
 }
+
+QString mm::Ui::currentLanguage() const { return language; }
+
 

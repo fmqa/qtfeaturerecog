@@ -2,6 +2,7 @@
 #define GUI_UI_HH
 
 #include <QMainWindow>
+#include <QString>
 
 class QMenu;
 class QToolBar;
@@ -25,9 +26,9 @@ namespace mm {
     class Ui : public QMainWindow {
         Q_OBJECT
     private:
-        struct uimenus { QMenu *file, *edit, *view, *language; };
+        struct uimenus { QMenu *file, *edit, *view, *extras, *language; };
         struct uitoolbars { QToolBar *file; };
-        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr, *german, *english, *capture; };
+        struct uiactions { QAction *open, *save, *savecirc, *copy, *copycirc, *exit, *viewsrc, *viewedges, *viewtransfm, *fullscr, *german, *english, *capture, *tts; };
         struct uioptions { EdgeOptions *edges; CircleOptions *circles; EllipseOptions *ellipses; };
         struct uicontrols { QPushButton *detectedges, *applytransfm, *stop; };
     private:
@@ -41,6 +42,7 @@ namespace mm {
         void alertEmptySourceImage();
         void alertNoParametricCircles();
         void alertSaveError(const QString &);
+        QString currentLanguage() const;
     public slots:
         void enableControls();
         void disableControls();
@@ -65,6 +67,8 @@ namespace mm {
         void dragEnterEvent(QDragEnterEvent *) override;
         void dropEvent(QDropEvent *) override;
         void changeEvent(QEvent *) override;
+    private:
+        QString language;
     };
 }
 
