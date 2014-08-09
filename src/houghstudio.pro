@@ -44,3 +44,10 @@ SOURCES += gui/main.cc \
            include/util/circles.cc
 FORMS += gui/camera/imagesettings.ui
 TRANSLATIONS += languages/houghstudio_de.ts
+
+dox.target = doc
+dox.commands = doxygen Doxyfile
+dox.depends =
+
+QMAKE_EXTRA_UNIX_TARGETS += dox
+
