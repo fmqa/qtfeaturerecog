@@ -156,7 +156,7 @@ static void uiInitOptions(mm::Ui *ui) {
 
 static void uiInitOptionsText(mm::Ui *ui) {
     ui->transfmtabs->setTabText(ui->transfmtabs->indexOf(ui->options.circles), QObject::tr("Circles"));
-    ui->transfmtabs->setTabText(ui->transfmtabs->indexOf(ui->options.ellipses), QObject::tr("Ellipses"));
+    ui->transfmtabs->setTabText(ui->transfmtabs->indexOf(ui->options.ellipses), QObject::tr("Ellipses (Experimental)"));
     ui->options.edges->retranslateUi();
     ui->options.circles->retranslateUi();
     ui->options.ellipses->retranslateUi();
