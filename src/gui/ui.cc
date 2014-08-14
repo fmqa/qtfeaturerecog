@@ -67,13 +67,13 @@ static void uiInitActionText(mm::Ui *ui) {
     ui->actions.save->setText(QObject::tr("&Save..."));
     ui->actions.save->setStatusTip(QObject::tr("Save the active image"));
     
-    ui->actions.savecirc->setText(QObject::tr("&Save circle mask..."));
+    ui->actions.savecirc->setText(QObject::tr("Save circle &mask..."));
     ui->actions.savecirc->setStatusTip(QObject::tr("Save the circle contents as an image"));
     
     ui->actions.copy->setText(QObject::tr("&Copy..."));
     ui->actions.copy->setStatusTip(QObject::tr("Copy the active image to clipboard"));
     
-    ui->actions.copycirc->setText(QObject::tr("&Copy circle mask..."));
+    ui->actions.copycirc->setText(QObject::tr("C&opy circle mask..."));
     ui->actions.copycirc->setStatusTip(QObject::tr("Save the circle contents as an image"));
     
     ui->actions.exit->setText(QObject::tr("E&xit"));
@@ -85,7 +85,7 @@ static void uiInitActionText(mm::Ui *ui) {
     ui->actions.viewedges->setText(QObject::tr("E&dge Map"));
     ui->actions.viewedges->setStatusTip(QObject::tr("Show the edge map of the image"));
     
-    ui->actions.viewtransfm->setText(QObject::tr("T&ransformed View"));
+    ui->actions.viewtransfm->setText(QObject::tr("&Transformed View"));
     ui->actions.viewtransfm->setStatusTip(QObject::tr("Show the transformed image"));
     
     ui->actions.fullscr->setText(QObject::tr("F&ullscreen Mode"));
@@ -130,7 +130,7 @@ static void uiInitMenuText(mm::Ui *ui) {
     ui->menus.file->setTitle(QObject::tr("&File"));
     ui->menus.edit->setTitle(QObject::tr("&Edit"));
     ui->menus.view->setTitle(QObject::tr("&View"));
-    ui->menus.extras->setTitle(QObject::tr("&Extras"));
+    ui->menus.extras->setTitle(QObject::tr("E&xtras"));
     ui->menus.language->setTitle(QObject::tr("&Language"));
 }
 
