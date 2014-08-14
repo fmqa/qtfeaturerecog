@@ -1,5 +1,5 @@
-CXXFLAGS = -std=c++11 -I../src/include -I/home/fadimk/Anwendungen/gtest/include
-LDFLAGS = -L/home/fadimk/Anwendungen/gtest/lib64 -lgtest -lgtest_main
+CXXFLAGS = -std=c++11 -Wall -g -I../src/include -I/home/fadimk/Anwendungen/gtest/include -fsanitize=address -fno-omit-frame-pointer
+LDFLAGS = -L/home/fadimk/Anwendungen/gtest/lib64 -lgtest -lgtest_main -lasan
 
 all: CirclesTest LineUtilsTest RasterCoreTest RasterFilterTest
 
