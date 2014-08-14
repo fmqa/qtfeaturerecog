@@ -78,9 +78,8 @@
         <translation>Speichert das aktive Bild</translation>
     </message>
     <message>
-        <location filename="../gui/ui.cc" line="70"/>
         <source>&amp;Save circle mask...</source>
-        <translation>&amp;Kreisinhalte speichern...</translation>
+        <translation type="vanished">&amp;Kreisinhalte speichern...</translation>
     </message>
     <message>
         <location filename="../gui/ui.cc" line="71"/>
@@ -99,9 +98,8 @@
         <translation>Kopiert das aktive Bild in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="../gui/ui.cc" line="76"/>
         <source>&amp;Copy circle mask...</source>
-        <translation>&amp;Kreisinhalte kopieren...</translation>
+        <translation type="vanished">&amp;Kreisinhalte kopieren...</translation>
     </message>
     <message>
         <source>Copy the circle contents to the clipboard</source>
@@ -138,9 +136,23 @@
         <translation>Zeigt das Kantenbild des Ursprungsbildes</translation>
     </message>
     <message>
-        <location filename="../gui/ui.cc" line="88"/>
         <source>T&amp;ransformed View</source>
-        <translation>&amp;Transformiertes Bild</translation>
+        <translation type="vanished">&amp;Transformiertes Bild</translation>
+    </message>
+    <message>
+        <location filename="../gui/ui.cc" line="70"/>
+        <source>Save circle &amp;mask...</source>
+        <translation>Kreis&amp;inhalte speichern...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ui.cc" line="76"/>
+        <source>C&amp;opy circle mask...</source>
+        <translation>Kreis&amp;inhalte kopieren...</translation>
+    </message>
+    <message>
+        <location filename="../gui/ui.cc" line="88"/>
+        <source>&amp;Transformed View</source>
+        <translation>Tran&amp;sformiertes Bild</translation>
     </message>
     <message>
         <location filename="../gui/ui.cc" line="89"/>
@@ -194,8 +206,12 @@
     </message>
     <message>
         <location filename="../gui/ui.cc" line="133"/>
+        <source>E&amp;xtras</source>
+        <translation>E&amp;xtras</translation>
+    </message>
+    <message>
         <source>&amp;Extras</source>
-        <translation>&amp;Extras</translation>
+        <translation type="vanished">&amp;Extras</translation>
     </message>
     <message>
         <location filename="../gui/ui.cc" line="134"/>
